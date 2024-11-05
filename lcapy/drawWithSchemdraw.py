@@ -8,8 +8,6 @@ from typing import List
 from lcapy.impedanceConverter import ImpedanceToComponent
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
 from lcapy.unitWorkAround import UnitWorkAround as uwa
-from sympy import latex
-from sympy import sympify
 from lcapy.unitPrefixer import SIUnitPrefixer
 from lcapy.jsonExportBase import JsonExportBase
 
@@ -40,6 +38,7 @@ class DrawWithSchemdraw:
         self.netLines: List[NetlistLine] = []
         self.fileName = os.path.splitext(fileName)[0]
         self.invertDrawParam = {"up": "down", "down": "up", "left": "right", "right": "left"}
+        self.labelPos = {"up": False, "down": True, "left": True, "right": False}
 
         # elm.style(elm.STYLE_IEC)
         # TODO would be nice to dont need this
@@ -158,35 +157,50 @@ class DrawWithSchemdraw:
 
     def draw_element(self, line: NetlistLine):
         value = None
+        sdElement = None
+
         if line.type == "Z":
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
         id_ = line.label()
         if line.type == "R" or line.type == "Z":
-            self.addElement(elm.Resistor(id_=id_, value_=value, d=line.drawParam), line)
+            sdElement = elm.Resistor(id_=id_, value_=value, d=line.drawParam)
         elif line.type == "L":
-            self.addElement(elm.Resistor(id_=id_, value_=value, d=line.drawParam, fill=True), line)
+            sdElement = elm.Resistor(id_=id_, value_=value, d=line.drawParam, fill=True)
         elif line.type == "C":
-            self.addElement(elm.Capacitor(id_=id_, value_=value, d=line.drawParam), line)
+            sdElement = elm.Capacitor(id_=id_, value_=value, d=line.drawParam)
         elif line.type == "W":
-            self.addElement(elm.Line(d=line.drawParam), line)
+            sdElement = elm.Line(d=line.drawParam)
         elif line.type == "V":
             # this is necessary because lcapy and schemdraw have a different convention for sources
             line.swapNodes()
+
             if line.ac_dc == "ac":
-                self.addElement(elm.sources.SourceSin(id_=id_, value_=value, d=line.drawParam), line)
+                sdElement = elm.sources.SourceSin(id_=id_, value_=value, d=line.drawParam)
             elif line.ac_dc == "dc":
-                self.addElement(elm.sources.SourceV(id_=id_, value_=value, d=line.drawParam), line)
+                sdElement = elm.sources.SourceV(id_=id_, value_=value, d=line.drawParam)
         elif line.type == "I":
             # this is necessary because lcapy and schemdraw have a different convention for sources
             line.swapNodes()
+
             if line.ac_dc == "ac":
-                self.addElement(elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam), line)
+                sdElement = elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
             elif line.ac_dc == "dc":
-                self.addElement(elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam), line)
+                elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
 
         else:
             raise RuntimeError(f"unknown element type {line.type}")
+
+        self.addElement(sdElement, line)
+        curLabel = elm.CurrentLabelInline(direction='in', id_="arrow").at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], id_="arrow").at(sdElement)
+
+        if line.type == "V" or line.type == "I":
+            self.cirDraw.add(curLabel.label("Iges", id_='arrow'))
+            self.cirDraw.add(volLabel.label("Vges", loc='bottom', id_='arrow'))
+        elif not line.type == "W":
+            self.cirDraw.add(curLabel.label("I" + id_[1:], id_='arrow'))
+            self.cirDraw.add(volLabel.label("V" + id_[1:], loc='bottom', id_='arrow'))
 
     def add_connection_dots(self):
         """

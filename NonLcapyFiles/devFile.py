@@ -19,4 +19,4 @@ st = time.time()
 solve.solve_circuit(filenames[8], filePath="StandardCircuits")
 et = time.time()
 
-print(f"Execution time was: {et-st} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
+print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
