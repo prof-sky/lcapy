@@ -1,3 +1,5 @@
+import os
+
 import solve
 import time
 from datetime import datetime
@@ -14,6 +16,11 @@ filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistors_I",  # 9
              "Circuit_resistors_I_ac"  # 10
              ]
+#  clear Solutions directory
+clearPath = "./Solutions"
+files = os.listdir(clearPath)
+for file in files:
+    os.remove(os.path.join(clearPath, file))
 
 st = time.time()
 solve.solve_circuit(filenames[8], filePath="StandardCircuits")

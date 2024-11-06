@@ -15,7 +15,7 @@ class TestImpedanceConverter:
         :return: Z value of Zsim1 from sol['step1'].circuit
         """
         cir = sol['step1'].circuit
-        value = cir.Zsim1.Z
+        value = cir.Zs1.Z
         _, compType = ValueToComponent(value)
         return compType
 

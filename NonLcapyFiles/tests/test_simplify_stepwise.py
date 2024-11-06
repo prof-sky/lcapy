@@ -27,7 +27,7 @@ class TestSimplifyStepwise:
 
         val1 = sol['step1'].lastStep.circuit.Z1.Z
         val2 = sol['step1'].lastStep.circuit.Z2.Z
-        result = sol['step1'].circuit.Zsim1.Z
+        result = sol['step1'].circuit.Zs1.Z
         if not oneTroughImp:
             assert result == val1 + val2, "Calculation in Impedance is wrong"
         else:
@@ -59,7 +59,7 @@ class TestSimplifyStepwise:
 
         val1 = sol['step1'].lastStep.circuit.Z1.Z
         val2 = sol['step1'].lastStep.circuit.Z2.Z
-        result = sol['step1'].circuit.Zsim1.Z
+        result = sol['step1'].circuit.Zs1.Z
 
         if compType:
             _, resultCompType = ValueToComponent(result)

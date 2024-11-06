@@ -34,9 +34,9 @@ def solveInUserOrder(filename):
     test.createInitialStep()
 
     test.simplifyTwoCpts(["Z4", "Z5"])
-    test.simplifyTwoCpts(["Z1", "Zsim1"])
+    test.simplifyTwoCpts(["Z1", "Zs1"])
     test.simplifyTwoCpts(["Z2", "Z3"])
-    test.simplifyTwoCpts(["Zsim2", "Zsim3"])
+    test.simplifyTwoCpts(["Zs2", "Zs3"])
 
 
 def test_solve_circuits():
