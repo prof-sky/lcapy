@@ -1,3 +1,7 @@
+## 1.24+inskale.0.19
+- String that is shown for voltage drops is a parameter, so it can be
+e.g. U1 in german and V1 in english that is shown next to elements
+
 ## 1.24+inskale.0.18
 - add current and voltage arrows
 - current and voltage arrows (including their labels) have the class "arrow" in the svg element

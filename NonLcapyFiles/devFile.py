@@ -23,7 +23,9 @@ for file in files:
     os.remove(os.path.join(clearPath, file))
 
 st = time.time()
-solve.solve_circuit(filenames[8], filePath="StandardCircuits")
+# solve.solve_circuit(filenames[8], filePath="StandardCircuits")
+a = solve.SolveInUserOrder(filenames[1], filePath="StandardCircuits", voltSym="U", savePath="Solutions")
+a.simplifyTwoCpts(["R1", "R2"])
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

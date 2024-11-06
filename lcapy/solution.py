@@ -20,7 +20,7 @@ from typing import Union
 
 
 class Solution:
-    def __init__(self, steps: list[SolutionStep]):
+    def __init__(self, steps: list[SolutionStep], voltSym: str = "U"):
         """
         This class simplifies the Solution and handles the access to all data that is necessary to create a step-by-step
         solution to a circuit. The input is of this class is the output of simplify_Stepwise
@@ -28,6 +28,7 @@ class Solution:
         """
         self._attributes = {}
         self.available_steps = []
+        self.voltSym = voltSym
         self.mapKey = dict([("initialCircuit", "step0")])
         # convert the steps returned from simplify_stepwise to SolutionSteps
         # the simplify function cant return SolutionSteps because it imports lcapy and therefor results in a circular
@@ -247,7 +248,7 @@ class Solution:
             filename = self.filename
         filename = os.path.splitext(filename)[0]
 
-        DrawWithSchemdraw(self[step].circuit, fileName=filename + f"_{step}.svg").draw(path=path)
+        DrawWithSchemdraw(self[step].circuit, fileName=filename + f"_{step}.svg", voltSym=self.voltSym).draw(path=path)
 
         return os.path.join(path, filename + f"_{step}.svg")
 

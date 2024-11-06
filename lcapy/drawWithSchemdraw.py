@@ -16,7 +16,7 @@ class DrawWithSchemdraw:
     """
     Use the schemdraw package to draw a netlist generated with lcapy
     """
-    def __init__(self, circuit: Circuit, fileName: str = "circuit", removeDangling: bool = True):
+    def __init__(self, circuit: Circuit, fileName: str = "circuit", removeDangling: bool = True, voltSym: str = "U"):
         """
         Use the schemdraw package to draw a netlist generated with lcapy. Only supports svg-files as output
         :param circuit: lcapy.Circuit object
@@ -26,6 +26,7 @@ class DrawWithSchemdraw:
         self.circuit = circuit
         self.nodePos = {}
         self.cirDraw = schemdraw.Drawing()
+        self.voltSym = voltSym
 
         self.source = circuit.elements[getSourcesFromCircuit(circuit)[0]]
         self.omega_0 = getOmegaFromCircuit(circuit, getSourcesFromCircuit(circuit))
@@ -191,10 +192,10 @@ class DrawWithSchemdraw:
 
         if line.type == "V" or line.type == "I":
             self.cirDraw.add(curLabel.label("Iges", class_='arrow'))
-            self.cirDraw.add(volLabel.reverse().label("Vges", loc='bottom', class_='arrow'))
+            self.cirDraw.add(volLabel.reverse().label(self.voltSym+"ges", loc='bottom', class_='arrow'))
         elif not line.type == "W":
             self.cirDraw.add(curLabel.label("I" + id_[1:], class_='arrow'))
-            self.cirDraw.add(volLabel.label("V" + id_[1:], loc='bottom', class_='arrow'))
+            self.cirDraw.add(volLabel.label(self.voltSym + id_[1:], loc='bottom', class_='arrow'))
 
     def add_connection_dots(self):
         """
