@@ -1,3 +1,7 @@
+## 1.24+inskale.0.18
+- add current and voltage arrows
+- current and voltage arrows (including their labels) have the class "arrow" in the svg element
+
 ## 1.24+inskale.0.17
 - fix modern art, some circuits where drawn incorrect
 - voltages and currents always negative
