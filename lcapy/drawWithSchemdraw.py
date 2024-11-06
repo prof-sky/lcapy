@@ -65,27 +65,25 @@ class DrawWithSchemdraw:
 
     def addElement(self, element: schemdraw.elements, netLine: NetlistLine):
 
-        label = netLine.label()
-
         # if no node position is known this is the first element it is used as the start points
         if netLine.startNode not in self.nodePos.keys() and netLine.endNode not in self.nodePos.keys():
-            self.cirDraw.add(element.label(label))
+            self.cirDraw.add(element)
         # if both node positions are known draw the element between them
         elif netLine.startNode in self.nodePos and netLine.endNode in self.nodePos.keys():
             self.cirDraw.add(
-                element.label(label).endpoints(
+                element.endpoints(
                     self.nodePos[netLine.startNode],
                     self.nodePos[netLine.endNode]
                 )
             )
         # if only the start node is known draw from there
         elif netLine.startNode in self.nodePos.keys():
-            self.cirDraw.add(element.label(label).at(self.nodePos[netLine.startNode]))
+            self.cirDraw.add(element.at(self.nodePos[netLine.startNode]))
         # if only the end node is known invert the direction information and start at the end node
         else:
             try:
                 element._userparams['d'] = self.invertDrawParam[netLine.drawParam]
-                self.cirDraw.add(element.label(label).at(self.nodePos[netLine.endNode]))
+                self.cirDraw.add(element.at(self.nodePos[netLine.endNode]))
                 self.addNodePositions(netLine.endNode, netLine.startNode)
                 return
             except KeyError:
@@ -182,25 +180,21 @@ class DrawWithSchemdraw:
         elif line.type == "I":
             # this is necessary because lcapy and schemdraw have a different convention for sources
             line.swapNodes()
-
-            if line.ac_dc == "ac":
-                sdElement = elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
-            elif line.ac_dc == "dc":
-                elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
+            sdElement = elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
 
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement, line)
-        curLabel = elm.CurrentLabelInline(direction='in', id_="arrow").at(sdElement)
-        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], id_="arrow").at(sdElement)
+        self.addElement(sdElement.label(line.label(), ofst=0.2), line)
+        curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.3).at(sdElement)
 
         if line.type == "V" or line.type == "I":
-            self.cirDraw.add(curLabel.label("Iges", id_='arrow'))
-            self.cirDraw.add(volLabel.label("Vges", loc='bottom', id_='arrow'))
+            self.cirDraw.add(curLabel.label("Iges", class_='arrow'))
+            self.cirDraw.add(volLabel.reverse().label("Vges", loc='bottom', class_='arrow'))
         elif not line.type == "W":
-            self.cirDraw.add(curLabel.label("I" + id_[1:], id_='arrow'))
-            self.cirDraw.add(volLabel.label("V" + id_[1:], loc='bottom', id_='arrow'))
+            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='arrow'))
+            self.cirDraw.add(volLabel.label("V" + id_[1:], loc='bottom', class_='arrow'))
 
     def add_connection_dots(self):
         """
