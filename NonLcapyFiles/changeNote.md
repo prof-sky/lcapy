@@ -1,3 +1,6 @@
+## 1.24+inskale.0.20
+- use changed interface of schemdraw 0.19+inskale.0.5
+
 ## 1.24+inskale.0.19
 - String that is shown for voltage drops is a parameter, so it can be
 e.g. U1 in german and V1 in english that is shown next to elements

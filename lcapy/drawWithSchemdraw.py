@@ -163,11 +163,11 @@ class DrawWithSchemdraw:
             value = self.latexStr(line)
         id_ = line.label()
         if line.type == "R" or line.type == "Z":
-            sdElement = elm.Resistor(id_=id_, value_=value, d=line.drawParam)
+            sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam)
         elif line.type == "L":
-            sdElement = elm.Resistor(id_=id_, value_=value, d=line.drawParam, fill=True)
+            sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill=True)
         elif line.type == "C":
-            sdElement = elm.Capacitor(id_=id_, value_=value, d=line.drawParam)
+            sdElement = elm.Capacitor(id_=id_, class_=value, d=line.drawParam)
         elif line.type == "W":
             sdElement = elm.Line(d=line.drawParam)
         elif line.type == "V":
@@ -175,18 +175,18 @@ class DrawWithSchemdraw:
             line.swapNodes()
 
             if line.ac_dc == "ac":
-                sdElement = elm.sources.SourceSin(id_=id_, value_=value, d=line.drawParam)
+                sdElement = elm.sources.SourceSin(id_=id_, class_=value, d=line.drawParam)
             elif line.ac_dc == "dc":
-                sdElement = elm.sources.SourceV(id_=id_, value_=value, d=line.drawParam)
+                sdElement = elm.sources.SourceV(id_=id_, class_=value, d=line.drawParam)
         elif line.type == "I":
             # this is necessary because lcapy and schemdraw have a different convention for sources
             line.swapNodes()
-            sdElement = elm.sources.SourceI(id_=id_, value_=value, d=line.drawParam)
+            sdElement = elm.sources.SourceI(id_=id_, class_=value, d=line.drawParam)
 
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(line.label(), ofst=0.2), line)
+        self.addElement(sdElement.label(line.label(), ofst=0.2, class_='na'), line)
         curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.3).at(sdElement)
 
