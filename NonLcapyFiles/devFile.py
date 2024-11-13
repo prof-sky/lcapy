@@ -24,7 +24,8 @@ for file in files:
 
 st = time.time()
 # solve.solve_circuit(filenames[8], filePath="StandardCircuits")
-a = solve.SolveInUserOrder(filenames[1], filePath="StandardCircuits", voltSym="U", savePath="Solutions")
+a = solve.SolveInUserOrder(filenames[1], filePath="StandardCircuits", voltSym="V", savePath="Solutions")
+a.createInitialStep()
 a.simplifyTwoCpts(["R1", "R2"])
 et = time.time()
 

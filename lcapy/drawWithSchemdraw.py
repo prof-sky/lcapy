@@ -161,7 +161,11 @@ class DrawWithSchemdraw:
         if line.type == "Z":
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
+            label = line.label()
+        else:
+            label = ""
         id_ = line.label()
+
         if line.type == "R" or line.type == "Z":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam)
         elif line.type == "L":
@@ -186,7 +190,7 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(line.label(), ofst=0.2, class_='na'), line)
+        self.addElement(sdElement.label(label, ofst=0.2, class_='na'), line)
         curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.3).at(sdElement)
 

@@ -8,9 +8,10 @@ from lcapy.unitPrefixer import SIUnitPrefixer
 
 
 class JsonExportBase:
-    def __init__(self, precision: int):
+    def __init__(self, precision: int, voltSym='U'):
         self.precision = precision
         self.prefixer = SIUnitPrefixer()
+        self.voltSym = voltSym
 
     def _latexRealNumber(self, value: Union[Mul, Expr], prec=None, addPrefix: bool = True) -> str:
         if prec is None:

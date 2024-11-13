@@ -1,3 +1,7 @@
+## 1.24+inskale.0.21
+- fix symbol for voltage drop in initial step always 'U'
+- exported names for voltage drop now depend on language and the used voltage symbol in the svg-File
+
 ## 1.24+inskale.0.20
 - use changed interface of schemdraw 0.19+inskale.0.5
 

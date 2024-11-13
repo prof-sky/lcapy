@@ -320,7 +320,7 @@ class Solution:
             fullPathName = ""
 
         if cvStep:
-            jsonExport = JsonVCValueExport()
+            jsonExport = JsonVCValueExport(voltSym=self.voltSym)
             as_dict = jsonExport.getDictForStep(step, self)
 
             if debug:

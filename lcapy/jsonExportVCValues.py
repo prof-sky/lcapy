@@ -22,8 +22,8 @@ class JsonVCValueExport(JsonExportBase):
     represents all information in the circuit in combination with lcapy.JsonCompValueExport. Has to be split up because
     in the user based mode not all information can be known when those files are generated
     """
-    def __init__(self, precision=3):
-        super().__init__(precision)
+    def __init__(self, precision=3, voltSym='U'):
+        super().__init__(precision, voltSym=voltSym)
         # this class automatically prefixes every field that includes val or Val in the name and transforms it to
         # a latex string before exporting the dictionary
         self.circuit: 'lcapy.Circuit' = None
@@ -103,9 +103,9 @@ class JsonVCValueExport(JsonExportBase):
         self.suffixName2 = NetlistLine(str(self.circuit[self.name2])).typeSuffix
 
     def _updateUnames(self):
-        self.oldNames['Uname'] = 'U' + self.suffixOldName
-        self.names1['Uname'] = 'U' + self.suffixName1
-        self.names2['Uname'] = 'U' + self.suffixName2
+        self.oldNames['Uname'] = self.voltSym + self.suffixOldName
+        self.names1['Uname'] = self.voltSym + self.suffixName1
+        self.names2['Uname'] = self.voltSym + self.suffixName2
 
     def _updateInames(self):
         self.oldNames['Iname'] = 'I' + self.suffixOldName
