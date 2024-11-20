@@ -3,6 +3,7 @@ import os
 import solve
 import time
 from datetime import datetime
+from lcapy.validateCircuitFile import ValidateCircuitFile
 
 filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistors.txt",  # 1
@@ -23,8 +24,13 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
+filename = filenames[11]
+
+if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
+    exit("File not valid")
+
 st = time.time()
-solve.solve_circuit(filenames[11], filePath="StandardCircuits")
+solve.solve_circuit(filename, filePath="StandardCircuits")
 # a = solve.SolveInUserOrder(filenames[7], filePath="StandardCircuits", voltSym="V", savePath="Solutions")
 # a.createInitialStep()
 # a.simplifyTwoCpts(["R2", "R1"])
