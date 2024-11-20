@@ -14,7 +14,8 @@ filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistor_task1.txt",  # 7
              "Circuit_resistor_task2.txt",  # 8
              "Circuit_resistors_I",  # 9
-             "Circuit_resistors_I_ac"  # 10
+             "Circuit_resistors_I_ac",  # 10
+             "00_vlCircuit.txt"  # 11
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -23,10 +24,11 @@ for file in files:
     os.remove(os.path.join(clearPath, file))
 
 st = time.time()
-# solve.solve_circuit(filenames[8], filePath="StandardCircuits")
-a = solve.SolveInUserOrder(filenames[1], filePath="StandardCircuits", voltSym="V", savePath="Solutions")
-a.createInitialStep()
-a.simplifyTwoCpts(["R1", "R2"])
+solve.solve_circuit(filenames[11], filePath="StandardCircuits")
+# a = solve.SolveInUserOrder(filenames[7], filePath="StandardCircuits", voltSym="V", savePath="Solutions")
+# a.createInitialStep()
+# a.simplifyTwoCpts(["R2", "R1"])
+# a.simplifyTwoCpts(["R3", "Rs1"])
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
