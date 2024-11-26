@@ -4,6 +4,7 @@ import solve
 import time
 from datetime import datetime
 from lcapy.validateCircuitFile import ValidateCircuitFile
+from lcapy.langSymbols import LangSymbols
 
 filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistors.txt",  # 1
@@ -31,7 +32,7 @@ if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
 
 st = time.time()
 solve.solve_circuit(filename, filePath="StandardCircuits")
-# a = solve.SolveInUserOrder(filenames[7], filePath="StandardCircuits", voltSym="V", savePath="Solutions")
+# a = solve.SolveInUserOrder(filenames[1], filePath="StandardCircuits", langSymbols=langSymbols, savePath="Solutions")
 # a.createInitialStep()
 # a.simplifyTwoCpts(["R2", "R1"])
 # a.simplifyTwoCpts(["R3", "Rs1"])
