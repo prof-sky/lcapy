@@ -8,31 +8,41 @@ from lcapy.langSymbols import LangSymbols
 from lcapy.jsonExportCircuitInfo import JsonExportCircuitInfo
 
 
-def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", langSymbols: LangSymbols = LangSymbols()):
+def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", langSymbols: dict = None):
+
+    if langSymbols is not None:
+        langSym = LangSymbols()
+        for key in langSymbols.keys():
+            langSym.add(key, langSymbols[key])
+    else:
+        langSym = LangSymbols()
+    
     cct = Circuit(FileToImpedance(os.path.join(filePath, filename)))
     cct.namer.reset()
     steps = cct.simplify_stepwise()
-    sol = Solution(steps, langSymbols=langSymbols)
+    sol = Solution(steps, langSymbols=langSym)
     sol.draw(path=savePath, filename=filename)
     sol.export(path=savePath, filename=filename)
 
 
 class SolveInUserOrder:
-    def __init__(self, filename: str, filePath=None, savePath=None, langSymbols: LangSymbols = LangSymbols()):
+    def __init__(self, filename: str, filePath="", savePath="", langSymbols: dict = None):
         """
         :param filename: str with filename of circuit to simplify
         :param filePath: str with path to circuit file if not in current directory
         :param savePath: str with path to save the result svg and jason files to
         """
-        if filePath is None:
-            filePath = ""
-        if savePath is None:
-            savePath = ""
+        if langSymbols is not None:
+            langSym = LangSymbols()
+            for key in langSymbols.keys():
+                langSym.add(key, langSymbols[key])
+        else:
+            langSym = LangSymbols()
 
         self.filename = filename
         self.filePath = filePath
         self.savePath = savePath
-        self.langSymbols = langSymbols
+        self.langSymbols = langSym
         self.circuit = Circuit(FileToImpedance(os.path.join(filePath, filename)))
         self.steps: list[SolutionStep] = [
             SolutionStep(self.circuit, None, None, None, None, None,

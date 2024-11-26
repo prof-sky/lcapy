@@ -6,6 +6,7 @@ from datetime import datetime
 from lcapy.validateCircuitFile import ValidateCircuitFile
 from lcapy.langSymbols import LangSymbols
 
+
 filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistors.txt",  # 1
              "Circuit_capacitors.txt",  # 2

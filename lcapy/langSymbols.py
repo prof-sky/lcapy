@@ -7,3 +7,6 @@ class LangSymbols:
         """
         self.volt = kwargs.get('volt', 'U')
         self.total = kwargs.get('total', 'ges')
+
+    def add(self, name: str, value: str):
+        self.__setattr__(name, value)

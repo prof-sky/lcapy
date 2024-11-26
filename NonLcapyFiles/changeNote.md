@@ -1,4 +1,8 @@
 ## 1.24+inskale.0.21
+- subscript suffix of voltage source current label and voltage label
+- support language dependend suffixes for current and voltage label of voltage source
+
+## 1.24+inskale.0.21
 - fix symbol for voltage drop in initial step always 'U'
 - exported names for voltage drop now depend on language and the used voltage symbol in the svg-File
 
