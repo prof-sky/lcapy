@@ -1,4 +1,13 @@
-## 1.24+inskale.0.21
+## 1.24+inskale.0.24
+- transparent fill for resistors to make them clickable in firefox
+- resolve solve.solve_circuit issue for Hetznecker circuit
+
+## 1.24+inskale.0.23
+- reduce distance between element and voltage arrow, collision when elements are drawn around
+a corner e.g. right and then down
+
+
+## 1.24+inskale.0.22
 - subscript suffix of voltage source current label and voltage label
 - support language dependend suffixes for current and voltage label of voltage source
 

@@ -367,9 +367,33 @@ class NetlistSimplifyMixin:
         net = self.copy()
 
         if series and net.in_series():
-            elements = list(net.in_series()[0])
+            elements = net.in_series()
+            for source in net.sources:
+                for pair in reversed(elements):
+                    if source in pair:
+                        if len(pair) > 2:
+                            pair.remove(source)
+                        else:
+                            elements.remove(pair)
+            if elements:
+                elements = list(elements[0])
+            else:
+                return []
+
         elif parallel and net.in_parallel():
-            elements = list(net.in_parallel()[0])
+            elements = net.in_parallel()
+            for source in net.sources:
+                for pair in reversed(elements):
+                    if source in pair:
+                        if len(pair) > 2:
+                            pair.remove(source)
+                        else:
+                            elements.remove(pair)
+            if elements:
+                elements = list(elements[0])
+            else:
+                return []
+
         else:
             return []
 
@@ -483,6 +507,9 @@ class NetlistSimplifyMixin:
 
             if lenSeries <= 1 and lenParallel <= 1:
                 break
+
+            if i == 99:
+                warn("maximum iterations while simplification exceeded, solution incomplete")
 
         return steps
 

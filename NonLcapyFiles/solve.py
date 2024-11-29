@@ -1,4 +1,4 @@
-# for lcapy version: 1.24+inskale.0.22
+# for lcapy version: 1.24+inskale.0.23
 from lcapy import Circuit, FileToImpedance, DrawWithSchemdraw
 from lcapy.solution import Solution
 from lcapy.componentRelation import ComponentRelation
@@ -8,7 +8,7 @@ from lcapy.langSymbols import LangSymbols
 from lcapy.jsonExportCircuitInfo import JsonExportCircuitInfo
 
 
-def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", langSymbols: dict = None):
+def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", langSymbols: dict = {}):
 
     langSym = LangSymbols(langSymbols)
     
@@ -21,7 +21,7 @@ def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", la
 
 
 class SolveInUserOrder:
-    def __init__(self, filename: str, filePath="", savePath="", langSymbols: dict = None):
+    def __init__(self, filename: str, filePath="", savePath="", langSymbols: dict = {}):
         """
         :param filename: str with filename of circuit to simplify
         :param filePath: str with path to circuit file if not in current directory

@@ -169,11 +169,11 @@ class DrawWithSchemdraw:
         id_ = line.label()
 
         if line.type == "R" or line.type == "Z":
-            sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam)
+            sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
         elif line.type == "L":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill=True)
         elif line.type == "C":
-            sdElement = elm.Capacitor(id_=id_, class_=value, d=line.drawParam)
+            sdElement = elm.Capacitor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
         elif line.type == "W":
             sdElement = elm.Line(d=line.drawParam)
         elif line.type == "V":
@@ -194,7 +194,7 @@ class DrawWithSchemdraw:
 
         self.addElement(sdElement.label(label, ofst=0.2, class_='na'), line)
         curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
-        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.3).at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
             self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='arrow'))
