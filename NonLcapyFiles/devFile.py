@@ -19,7 +19,9 @@ filenames = ["Circuit_inductors.txt",  # 0
              "Circuit_resistors_I",  # 9
              "Circuit_resistors_I_ac",  # 10
              "00_vlCircuit.txt",  # 11
-             "Resistor_Hetznecker.txt"  # 12
+             "Resistor_Hetznecker.txt",  # 12
+             "C_parallel_dc",  # 13
+             "03_resistor_parallel3.txt"  # 14
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -27,17 +29,17 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[12]
+filename = filenames[14]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
 
 st = time.time()
-solve.solve_circuit(filename, filePath="StandardCircuits")
-# a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
-# a.createInitialStep()
-# a.simplifyTwoCpts(["R1", "R2"])
-# a.simplifyTwoCpts(["R3", "Rs1"])
+# solve.solve_circuit(filename, filePath="StandardCircuits")
+a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
+a.createInitialStep()
+a.simplifyTwoCpts(["R1", "R3"])
+a.simplifyTwoCpts(["Rs1", "R2"])
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

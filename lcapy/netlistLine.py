@@ -88,6 +88,7 @@ class NetlistLine:
 
         return ac_dc, value, phase, omega
 
+    @property
     def label(self):
         if not self.type == "W":
             return self.type + self.typeSuffix

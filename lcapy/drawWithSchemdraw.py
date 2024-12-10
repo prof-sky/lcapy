@@ -112,12 +112,24 @@ class DrawWithSchemdraw:
         """
         netLines.sort(key=lambda x: x.startNode)
 
-    def draw(self, path=None, maxDrawingIterations: int = 100):
+    def draw(self, path=""):
+        # save the created svg file
+        if os.path.splitext(self.fileName)[1] == ".svg":
+            saveName = self.fileName
+        else:
+            saveName = self.fileName + ".svg"
+
+        savePath = os.path.join(path, saveName)
+        svgFile = open(savePath, 'w')
+        svgFile.write(self.getImageData())
+        return savePath
+
+    def getImageData(self, maxDrawingIterations: int = 100) -> str:
         DrawWithSchemdraw.orderNetlistLines(self.netLines)
 
         # start with the source than add where one node is known, avoids drawing node at a place it should not be
-        sourceLabel = NetlistLine(str(self.source)).label()
-        source = next(line for line in self.netLines if line.label() == sourceLabel)
+        sourceLabel = NetlistLine(str(self.source)).label
+        source = next(line for line in self.netLines if line.label == sourceLabel)
         self.draw_element(source)
         self.netLines.remove(source)
 
@@ -140,33 +152,22 @@ class DrawWithSchemdraw:
 
         self.add_connection_dots()
 
-        # save the created svg file
-        if os.path.splitext(self.fileName)[1] == ".svg":
-            saveName = self.fileName
-        else:
-            saveName = self.fileName + ".svg"
-        self.cirDraw.save(saveName)
-
-        if path:
-            newPath = os.path.join(path, saveName)
-            if os.path.exists(newPath):
-                os.remove(newPath)
-            os.rename(saveName, newPath)
-            return newPath
-
-        return saveName
+        return self.cirDraw.get_imagedata().decode('utf-8')
 
     def draw_element(self, line: NetlistLine):
         value = None
         sdElement = None
 
-        if line.type == "Z":
+        id_ = line.label
+        if line.type == "W":
+            label = ""
+        elif line.type == 'V' or line.type == 'I':
+            label = id_
+            value = line.value
+        else:
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
-            label = line.type + line.typeSuffix
-        else:
-            label = ""
-        id_ = line.label()
+            label = line.label
 
         if line.type == "R" or line.type == "Z":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
@@ -192,7 +193,7 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(label, ofst=0.2, class_='na'), line)
+        self.addElement(sdElement.label(label, ofst=0.2, class_='EL'), line)
         curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.15).at(sdElement)
 
