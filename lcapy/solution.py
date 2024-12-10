@@ -61,9 +61,6 @@ class Solution:
             if i + 1 <= len(solSteps) - 1:
                 self[curStep].nextStep = solSteps[i + 1]
 
-        for solText, solStep in self._nextSolutionText(returnSolutionStep=True):
-            solStep.solutionText = solText
-
     def __getitem__(self, key):
         try:
             return self._attributes[key]
@@ -147,46 +144,6 @@ class Solution:
 
         return returnVal
 
-    def solutionText(self, step: str) -> str:
-        """
-        returns the solution text of the given step
-        :param step: step0, step1, step2, step<n> ..., getAvailableSteps returns all valid steps
-        :return: solutionText for the given step
-        """
-        assert isinstance(self, Solution)
-        assert isinstance(self[step], SolutionStep)
-
-        if self[step].isInitialStep:
-            return "\ninitialCircuit / step0"
-
-        name1 = self[step].cpt1
-        name2 = self[step].cpt2
-        newName = self[step].newCptName
-        thisStep = self[step]
-        lastStep = self[step].lastStep
-
-        solText = "\n-------------------------------"
-        solText += f"\nSimplified {name1} and {name2} to {newName}"
-        solText += f"\nthe components are in {thisStep.relation}"
-        solText += f"\n{name1}: {self.getElementSpecificValue(lastStep.circuit[name1], unit=True)}"
-        solText += f"\n{name2}: {self.getElementSpecificValue(lastStep.circuit[name2], unit=True)}"
-        solText += (f"\n{newName} (Result):" +
-                    f"{self.getElementSpecificValue(thisStep.circuit[newName], unit=True)}")
-        return solText
-
-    def _nextSolutionText(self, skip: set = None, returnSolutionStep: bool = False) -> str or (str, SolutionStep):
-        """
-        is used internally, Externally use steps() or completeSolutionText()
-        :param skip: steps to skip
-        :param returnSolutionStep: bool, default False when true returns str and SolutionStep else only str
-        :return: str || str and SolutionStep, based on returnSolutionStep
-        """
-        for step in self.getAvailableSteps(skip):
-            if not returnSolutionStep:
-                yield self.solutionText(step)
-            else:
-                yield self.solutionText(step), self[step]
-
     def steps(self, skip: set = None) -> Iterable[SolutionStep]:
         """
         yields the steps from the simplification. They can be iterated in a for loop e.g.:
@@ -199,17 +156,6 @@ class Solution:
         """
         for step in self.getAvailableSteps(skip=skip):
             yield self[step]
-
-    def completeSolutionText(self, skip: set = None) -> str:
-        """
-        returns the complete solution text for the Steps saved in the Solution Object it's called on
-        :param skip: steps to skip
-        :return: string that contains the complete solution text
-        """
-        solText = ""
-        for step in self.getAvailableSteps(skip):
-            solText += self.solutionText(step)
-        return solText
 
     @staticmethod
     def check_path(path: str):
