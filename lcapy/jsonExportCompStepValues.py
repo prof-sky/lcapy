@@ -32,17 +32,13 @@ class JsonExportStepValues:
 
     def toDict(self) -> dict:
         return {
-            "name1": self.name1,
-            "name2": self.name2,
-            "newName": self.newName,
+            "cptNames": [self.name1, self.name2],
+            "newCptName": self.newName,
             "relation": self.relation,
-            "value1": self.value1,
-            "value2": self.value2,
-            "result": self.result,
-            "latexEquation": self.latexEquation,
+            "cptValues": [self.value1, self.value2],
+            "newCptVal": self.result,
             "hasConversion": self.hasConversion,
-            "convVal1": self.convVal1,
-            "convVal2": self.convVal2,
-            "convResult": self.convResult
+            "convCptVals": [self.convVal1, self.convVal2],
+            "convNewCptVal": self.convResult
         }
 

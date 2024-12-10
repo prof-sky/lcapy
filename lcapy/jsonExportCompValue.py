@@ -1,17 +1,7 @@
-import sympy
-from sympy import latex
-from lcapy import ConstantFrequencyResponseDomainExpression as cfrde
-
 import lcapy
 from lcapy import state
-from sympy import Mul
-from lcapy.impedanceConverter import ImpedanceToComponent
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
-from lcapy.netlistLine import NetlistLine
-from sympy.physics.units import Hz
-from sympy import parse_expr
-from lcapy import omega0, omega
 from lcapy.jsonExportCompStepValues import JsonExportStepValues
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy.jsonExportBase import JsonExportBase
@@ -27,23 +17,18 @@ class JsonCompValueExport(JsonExportBase):
     <lcapy.Solution>.available_steps
     """
     def __init__(self, precision=3):
-        self.name1 = None
-        self.name2 = None
+        self.names: list[str] = []
         self.newName = None
         self.thisStep = None
         self.lastStep = None
         self.step = None
-        self.cpt1 = None  # component1
-        self.cpt2 = None  # component2
+        self.cpts: list = []  # components
         self.cptRes = None  # componentResult
-        self.value1 = None  # valueComponent1
-        self.value2 = None  # valueComponent2
+        self.values: list = []  # valuesComponent
         self.result = None  # valueComponentResult
-        self.convVal1 = None  # convertedValueComponent1 -> converted from Impedance to R,L or C if possible
-        self.convVal2 = None  # convertedValueComponent2 -> converted from Impedance to R,L or C if possible
+        self.convVals: list = []  # convertedValueComponent1 -> converted from Impedance to R,L or C if possible
         self.convResult = None  # convertedValueComponentResult -> converted from Impedance to R,L or C if possible
-        self.cvc1Type = None  # convertedValueComponent1Type
-        self.cvc2Type = None  # convertedValueComponent2Type
+        self.cvcTypes: list = []  # convertedValueComponent1Type
         self.cvcrType = None  # convertedValueComponentResultType
         self.omega_0 = None
 
@@ -54,33 +39,36 @@ class JsonCompValueExport(JsonExportBase):
     def _updateObjectValues(self, step, solution: 'lcapy.Solution'):
         # the values for name1 and name2 are not final if they are transformable they are adjusted later on
         # e.g. from Z1 to R1, L1, or C1
-        self.name1 = solution[step].cpt1
-        self.name2 = solution[step].cpt2
+        for name in solution[step].cpts:
+            self.names.append(name)
+
         self.newName = solution[step].newCptName
         self.thisStep = solution[step]
         self.lastStep = solution[step].lastStep
         self.omega_0 = getOmegaFromCircuit(solution[step].circuit, getSourcesFromCircuit(solution[step].circuit))
 
         if not self._isInitialStep():
-            self.cpt1 = self.lastStep.circuit[self.name1]
-            self.cpt2 = self.lastStep.circuit[self.name2]
+            for name in self.names:
+                self.cpts.append(self.lastStep.circuit[name])
             self.cptRes = self.thisStep.circuit[self.newName]
 
-            self.value1 = self.cpt1.Z
-            self.value2 = self.cpt2.Z
+            for value in self.cpts:
+                self.values.append(value.Z)
             self.result = self.cptRes.Z
 
             #  try to convert the value to an R, L, C component
-            self.convVal1, self.cvc1Type = ValueToComponent(self.value1.expr, omega_0=self.omega_0)
-            self.convVal2, self.cvc2Type = ValueToComponent(self.value2.expr, omega_0=self.omega_0)
+            for value in self.values:
+                convVal, cvcType = ValueToComponent(value.expr, omega_0=self.omega_0)
+                self.convVals.append(uwa.addUnit(convVal, cvcType))
+                self.cvcTypes.append(cvcType)
+
             self.convResult, self.cvcrType = ValueToComponent(self.result.expr, omega_0=self.omega_0)
-            #  add the unit of the component to the sympy.Mul object
-            self.convVal1 = uwa.addUnit(self.convVal1, self.cvc1Type)
-            self.convVal2 = uwa.addUnit(self.convVal2, self.cvc2Type)
             self.convResult = uwa.addUnit(self.convResult, self.cvcrType)
+
             #  create new names for the components e.g. Z1 to R1
-            self.name1 = self.cvc1Type + self.cpt1.id
-            self.name2 = self.cvc2Type + self.cpt2.id
+            for idx in range(0, len(self.names)):
+                self.names[idx] = self.cvcTypes[idx] + self.cpts[idx].id
+
             self.newName = self.cvcrType + self.cptRes.id
 
     def getDictForStep(self, step, solution: 'lcapy.Solution'):
@@ -93,7 +81,7 @@ class JsonCompValueExport(JsonExportBase):
 
         elif self._checkEssentialInformation():
             raise ValueError(f"missing information in {step}: "
-                             f"{self.name1}, {self.name2}, {self.newName}, {self.thisStep}, {self.lastStep}")
+                             f"{self.names}, {self.newName}, {self.thisStep}, {self.lastStep}")
 
         else:
             state.show_units = True
@@ -110,14 +98,22 @@ class JsonCompValueExport(JsonExportBase):
             else:
                 values = self._handleNoConversionPossible()
 
-            for key in self.valueFieldKeys:
+            for key in ['newCptVal', 'convNewCptVal']:
                 if values[key]:
                     values[key] = self.latexWithPrefix(values[key])
+
+            for idx, val in enumerate(values['cptValues']):
+                if val:
+                    values['cptValues'][idx] = self.latexWithPrefix(val)
+
+            for idx, val in enumerate(values['convCptVals']):
+                if val:
+                    values['convCptVals'][idx] = self.latexWithPrefix(val)
 
             return values
 
     def _isInitialStep(self) -> bool:
-        return not (self.name1 and self.name2 and self.newName and self.lastStep) and self.thisStep
+        return not (self.names and self.newName and self.lastStep) and self.thisStep
 
     def _checkEssentialInformation(self) -> bool:
         """
@@ -125,110 +121,63 @@ class JsonCompValueExport(JsonExportBase):
         exception is the initial step that does acquire the information it needs.
         :returns: true if information is available, false otherwise
         """
-        return not (self.name1 or self.name2 or self.newName or self.lastStep or self.thisStep or self.step)
+        return not (self.names or self.newName or self.lastStep or self.thisStep or self.step)
 
     def _allValuesConvertableToComponent(self) -> bool:
-        return (not self.cvc1Type == "Z"
-                and not self.cvc2Type == "Z"
-                and not self.cvcrType == "Z")
+        return all(types != 'Z' for types in self.cvcTypes + [self.cvcrType])
 
     def _isSameType(self) -> bool:
-        return self.cvc1Type == self.cvc2Type
+        return all(types == self.cvcTypes[0] for types in self.cvcTypes)
 
     def _handleSameTypeAndConvertibleToComponent(self) -> dict:
-        eqVal1 = self.convVal1
-        eqVal2 = self.convVal2
-        eqRes = self.convResult
-        compType = self.cvc1Type
-        assert compType in ["R", "L", "C"]
+        # replace with for loop
+        val1 = self.convVals[0]
+        val2 = self.convVals[1]
+        res = self.convResult
+        assert self.cvcTypes[0] in ["R", "L", "C"]
 
-        equation = self._makeLatexEquation(eqVal1, eqVal2, eqRes, self.thisStep.relation, compType)
-
-        return JsonExportStepValues(self.name1, self.name2, self.newName, self.thisStep.relation,
-                                    eqVal1, eqVal2, eqRes, equation,
+        return JsonExportStepValues(self.names[0], self.names[1], self.newName, self.thisStep.relation,
+                                    val1, val2, res, "NoLatexEquation",
                                     convVal1=None, convVal2=None, convResult=None).toDict()
 
     def _handleDifferentTypeAndConvertibleToComponent(self) -> dict:
-        eqVal1 = self.value1.expr_with_units
-        eqVal2 = self.value2.expr_with_units
-        eqRes = self.result.expr_with_units
-        compType = self.cptRes.type
-        assert compType == "Z"
+        # replace with for loop
+        val1 = self.values[0].expr_with_units
+        val2 = self.values[1].expr_with_units
+        res = self.result.expr_with_units
+
+        assert self.cptRes.type == "Z"
         convValCptRes = self.convResult.expr_with_units
 
-        equation = self._makeLatexEquation(eqVal1, eqVal2, eqRes, self.thisStep.relation, compType)
-
-        return JsonExportStepValues(self.name1, self.name2, self.newName, self.thisStep.relation,
-                                    eqVal1, eqVal2, eqRes, equation,
+        return JsonExportStepValues(self.names[0], self.names[1], self.newName, self.thisStep.relation,
+                                    val1, val2, res, "NoLatexEquation",
                                     convVal1=None, convVal2=None, convResult=convValCptRes).toDict()
 
     def _resultConvertibleToComponent(self) -> bool:
-        return (self.cvc1Type == "Z"
-                and self.cvc2Type == "Z"
+        return (all(x == 'Z' for x in self.cvcTypes)
                 and not self.cvcrType == "Z")
 
     def _handleResultConvertibleToComponent(self) -> dict:
-        eqVal1 = self.value1.expr_with_units
-        eqVal2 = self.value2.expr_with_units
-        eqRes = self.result.expr_with_units
-        compType = self.cpt1.type
-        assert compType == "Z"
+        # replace with for loop
+        val1 = self.values[0].expr_with_units
+        val2 = self.values[1].expr_with_units
+        res = self.result.expr_with_units
+
+        assert self.cpts[0].type == "Z"
         convValCptRes = self.convResult
 
-        equation = self._makeLatexEquation(eqVal1, eqVal2, eqRes, self.thisStep.relation, compType)
-
-        return JsonExportStepValues(self.name1, self.name2, self.newName, self.thisStep.relation,
-                                    eqVal1, eqVal2, eqRes, equation,
+        return JsonExportStepValues(self.names[0], self.names[1], self.newName, self.thisStep.relation,
+                                    val1, val2, res, "NoLatexEquation",
                                     convVal1=None, convVal2=None, convResult=convValCptRes).toDict()
 
     def _handleNoConversionPossible(self) -> dict:
-        eqVal1 = self.value1.expr_with_units
-        eqVal2 = self.value2.expr_with_units
-        eqRes = self.result.expr_with_units
-        compType = self.cpt1.type
-        assert compType == "Z"
+        # replace with for loop
+        val1 = self.values[0].expr_with_units
+        val2 = self.values[1].expr_with_units
+        res = self.result.expr_with_units
 
-        equation = self._makeLatexEquation(eqVal1, eqVal2, eqRes, self.thisStep.relation, compType)
+        assert self.cpts[0].type == "Z"
 
-        return JsonExportStepValues(self.name1, self.name2, self.newName, self.thisStep.relation,
-                                    eqVal1, eqVal2, eqRes, equation,
+        return JsonExportStepValues(self.names[0], self.names[1], self.newName, self.thisStep.relation,
+                                    val1, val2, res, "NoLatexEquation",
                                     convVal1=None, convVal2=None, convResult=None).toDict()
-
-    def _makeLatexEquation(self, exp1: cfrde, exp2: cfrde, expRslt: cfrde, cptRelation: str, compType: str) \
-            -> str:
-
-        if compType not in ["R", "L", "C", "Z"]:
-            raise ValueError(f"{compType} is unknown, component type has to be R, L, C or Z")
-
-        # inverse sum means 1/x1 + 1/x2 = 1/_xresult e.g parallel resistor
-        parallelRel = {"R": "inverseSum", "C": "sum", "L": "inverseSum", "Z": "inverseSum"}
-        rowRel = {"R": "sum", "C": "inverseSum", "L": "sum", "Z": "sum"}
-
-        state.show_units = True
-        if cptRelation == "parallel":
-            useFunc = parallelRel[compType]
-        elif cptRelation == "series":
-            useFunc = rowRel[compType]
-        else:
-            raise AttributeError(
-                f"Unknown relation between elements {cptRelation}. Known relations are: parallel, series"
-            )
-
-        if not compType == "Z":
-            expStr1 = self.latexWithPrefix(exp1)
-            expStr2 = self.latexWithPrefix(exp2)
-            expStrRslt = self.latexWithPrefix(expRslt)
-        else:
-            expStr1 = self.latexWithoutPrefix(exp1)
-            expStr2 = self.latexWithoutPrefix(exp2)
-            expStrRslt = self.latexWithoutPrefix(expRslt)
-
-        # has to be a string because otherwise it would be simplified and only the result would be in the latex string
-        if useFunc == "inverseSum":
-            equation = "\\frac{1}{\\frac{1}{" + expStr1 + "} + \\frac{1}{" + expStr2 + "}} = " + expStrRslt
-        elif useFunc == "sum":
-            equation = expStr1 + " + " + expStr2 + " = " + expStrRslt
-        else:
-            raise NotImplementedError(f"Unknown function {useFunc}")
-
-        return equation

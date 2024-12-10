@@ -13,11 +13,12 @@ class SolutionStep:
                  relation: ComponentRelation, solutionText: str, lastStep: Circuit, nextStep: Circuit,
                  ):
         self.circuit: Circuit = circuit
-        self.cpt1: Union[str, None] = cpt1
-        self.cpt2: Union[str, None] = cpt2
+        self.cpt1 = cpt1
+        self.cpt2 = cpt2
+        self.cpts: list[str] = [cpt1, cpt2]
         self.newCptName: Union[str, None] = newCptName
         self.relation: ComponentRelation = relation
-        self.isInitialStep: bool = not (self.cpt1 or self.cpt2 or self.newCptName or self.relation)
+        self.isInitialStep: bool = not (self.cpts or self.newCptName or self.relation)
         self.solutionText: Union[str, None] = solutionText
         self.lastStep: Union[Circuit, None] = lastStep
         self.nextStep: Union[Circuit, None] = nextStep
