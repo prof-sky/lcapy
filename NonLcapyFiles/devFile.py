@@ -29,17 +29,17 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[14]
+filename = filenames[1]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
 
 st = time.time()
-# solve.solve_circuit(filename, filePath="StandardCircuits")
-a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
-a.createInitialStep()
-a.simplifyTwoCpts(["R1", "R3"])
-a.simplifyTwoCpts(["Rs1", "R2"])
+solve.solve_circuit(filename, filePath="StandardCircuits")
+# a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
+# a.createInitialStep()
+# a.simplifyTwoCpts(["R1", "R3"])
+# a.simplifyTwoCpts(["Rs1", "R2"])
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
