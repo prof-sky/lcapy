@@ -846,7 +846,7 @@ class LcapyTester(unittest.TestCase):
         from lcapy.componentnamer import ComponentNamer
         cptNmr = ComponentNamer()
         cptNmr.reset()
-        self.assertEqual(a.simplify().Rs2.R, 30, 'series R')
+        self.assertEqual(a.simplify().Rs1.R, 30, 'series R')
         cptNmr.reset()
         self.assertEqual(a.simplify_series(ignore=['R3']).Rs1.R, 15, 'series R')
         cptNmr.reset()
@@ -861,9 +861,9 @@ class LcapyTester(unittest.TestCase):
         R3 1 2 15""")
 
         cptNmr.reset()
-        self.assertEqual(b.simplify().Rs2.R, 7.5, 'parallel R')
+        self.assertEqual(b.simplify().Rs1.R, 7.5, 'parallel R')
         cptNmr.reset()
-        self.assertEqual(b.simplify_parallel().Rs2.R, 7.5, 'parallel R')
+        self.assertEqual(b.simplify_parallel().Rs1.R, 7.5, 'parallel R')
         cptNmr.reset()
         self.assertEqual(b.simplify_parallel(ignore=['R1']).Rs1.R, 12, 'parallel R')
         cptNmr.reset()
