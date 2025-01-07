@@ -458,7 +458,7 @@ class NetlistSimplifyMixin:
         """
 
         net = self.copy()
-        steps: list[SolutionStep] = [SolutionStep(circuit=net, cpt1=None, cpt2=None, newCptName=None,
+        steps: list[SolutionStep] = [SolutionStep(circuit=net, cpts=[], newCptName=None,
                                                   relation=ComponentRelation.none.value, solutionText=None,
                                                   lastStep=None, nextStep=None)]
 
@@ -473,7 +473,7 @@ class NetlistSimplifyMixin:
             selected = net.get_next_simplify_elements(series=True, debug=debug)
             if len(selected) > 1:
                 net, newCptName = self.simplify_N_cpts(net, selected=selected)
-                steps.append(SolutionStep(circuit=net, cpt1=selected[0], cpt2=selected[1],
+                steps.append(SolutionStep(circuit=net, cpts=selected,
                                           newCptName=newCptName, relation=ComponentRelation.series.value,
                                           solutionText=None, lastStep=None, nextStep=None))
                 continue
@@ -481,7 +481,7 @@ class NetlistSimplifyMixin:
             selected = net.get_next_simplify_elements(parallel=True, debug=debug)
             if len(selected) > 1:
                 net, newCptName = self.simplify_N_cpts(net, selected=selected)
-                steps.append(SolutionStep(circuit=net, cpt1=selected[0], cpt2=selected[1],
+                steps.append(SolutionStep(circuit=net, cpts=selected,
                                           newCptName=newCptName, relation=ComponentRelation.parallel.value,
                                           solutionText=None, lastStep=None, nextStep=None))
                 continue

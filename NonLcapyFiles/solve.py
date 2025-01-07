@@ -35,7 +35,7 @@ class SolveInUserOrder:
         self.langSymbols = langSym
         self.circuit = Circuit(FileToImpedance(os.path.join(filePath, filename)))
         self.steps: list[SolutionStep] = [
-            SolutionStep(self.circuit, None, None, None, None, None,
+            SolutionStep(self.circuit, [], None, None, None, None,
                          None)
         ]
         self.circuit.namer.reset()
