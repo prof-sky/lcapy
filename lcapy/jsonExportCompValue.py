@@ -79,7 +79,7 @@ class JsonCompValueExport(JsonExportBase):
                                         None, None, None, None,
                                         None, None, None).toDict()
 
-        elif self._checkEssentialInformation():
+        elif self._essentialInformationMissing():
             raise ValueError(f"missing information in {step}: "
                              f"{self.names}, {self.newName}, {self.thisStep}, {self.lastStep}")
 
@@ -115,7 +115,7 @@ class JsonCompValueExport(JsonExportBase):
     def _isInitialStep(self) -> bool:
         return not (self.names and self.newName and self.lastStep) and self.thisStep
 
-    def _checkEssentialInformation(self) -> bool:
+    def _essentialInformationMissing(self) -> bool:
         """
         this function makes sure that all information that is needed to compute a solution step is available,
         exception is the initial step that does acquire the information it needs.

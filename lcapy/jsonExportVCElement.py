@@ -15,17 +15,14 @@ class VCElement:
         self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
         self.uName = voltSym + self.suffix
         self.iName = 'I' + self.suffix
-        self._value, self._convValue, compType = self._checkForConversion(self.circuit[compName].Z)
+        self._value, self._convValue, compType = self._convertValue(self.circuit[compName].Z)
         self._i = self.circuit[compName].I(t)
         self._u = self.circuit[compName].V(t)
         self.name = compType + self.suffix
 
-    def _checkForConversion(self, value) -> tuple:
+    def _convertValue(self, value) -> tuple:
         convValue, convCompType = ValueToComponent(value, self.omega_0)
-        if 'Z' == convCompType:
-            return value, None, 'Z'
-        else:
-            return value, uwa.addUnit(convValue, convCompType), convCompType
+        return value, uwa.addUnit(convValue, convCompType), convCompType
 
     @property
     def value(self):
