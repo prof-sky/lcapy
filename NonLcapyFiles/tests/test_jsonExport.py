@@ -73,9 +73,9 @@ class TestJsonExport:
         for step in sol.available_steps:
             jsonFileName, _ = sol.exportStepAsJson(step, path=savePath, filename=fileName, simpStep=True, cvStep=False)
             data = self.readJson(jsonFileName)
-            for key in ["name1", "name2", "newName", "relation",
-                        "value1", "value2", "result", "latexEquation",
-                        "hasConversion", "convVal1", "convVal2", "convResult"]:
+            for key in ["cptNames", "newCptName", "relation",
+                        "cptValues", "newCptVal",
+                        "hasConversion", "convCptVals", "convNewCptVal"]:
                 assert key in data.keys(), f"filename: {jsonFileName}"
 
     def test_JsonCompValueExport(self):
