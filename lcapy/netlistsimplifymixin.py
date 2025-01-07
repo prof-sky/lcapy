@@ -45,7 +45,7 @@ class NetlistSimplifyMixin:
             if explain:
                 print('%s combined IC = %s' % (subset, ic))
 
-        newname = self.namer(name[0] + 's', self.elements)
+        newname = self.namer.tmpName(name[0], self.elements)
         net1 = elt._new_value(total, ic)
         parts = net1.split(' ', 1)
         net1 = newname + ' ' + parts[1]
@@ -431,7 +431,7 @@ class NetlistSimplifyMixin:
             warn("No simplification performed, might not work as expected", RuntimeWarning)
             return ""
 
-    def simplify_two_cpts(self, net, selected, stepwise: bool = True):
+    def simplify_N_cpts(self, net, selected, stepwise: bool = True):
         """
         simplifies two selected componentes of a circuit and returns the new Circuit and the name of the simplified
         component.
@@ -441,11 +441,6 @@ class NetlistSimplifyMixin:
         :param selected: the two components to be simplified
         :return: the simplified circuit as a circuit and the name of the simplified component as a string
         """
-
-        if len(selected) > 2:
-            warn(f"first two components selected, length exceeded 2", RuntimeWarning)
-            selected = selected[0:2]
-
         oldCpts = set(net.cpts)
         net = net.simplify(select=selected, stepwise=stepwise)
         newCpts = set(net.cpts)
@@ -477,7 +472,7 @@ class NetlistSimplifyMixin:
 
             selected = net.get_next_simplify_elements(series=True, debug=debug)
             if len(selected) > 1:
-                net, newCptName = self.simplify_two_cpts(net, selected=selected)
+                net, newCptName = self.simplify_N_cpts(net, selected=selected)
                 steps.append(SolutionStep(circuit=net, cpt1=selected[0], cpt2=selected[1],
                                           newCptName=newCptName, relation=ComponentRelation.series.value,
                                           solutionText=None, lastStep=None, nextStep=None))
@@ -485,7 +480,7 @@ class NetlistSimplifyMixin:
 
             selected = net.get_next_simplify_elements(parallel=True, debug=debug)
             if len(selected) > 1:
-                net, newCptName = self.simplify_two_cpts(net, selected=selected)
+                net, newCptName = self.simplify_N_cpts(net, selected=selected)
                 steps.append(SolutionStep(circuit=net, cpt1=selected[0], cpt2=selected[1],
                                           newCptName=newCptName, relation=ComponentRelation.parallel.value,
                                           solutionText=None, lastStep=None, nextStep=None))
@@ -584,5 +579,19 @@ class NetlistSimplifyMixin:
                 break
         if not modify:
             return self
+
+        # add right name
+
+        tmpNames = [name for name in net.cpts if "tmp" in name]
+        # ToDo
+        for tmpName in tmpNames:
+            newname = net.namer.name(tmpName[0] + 's', self.elements)
+
+            net1 = str(net.elements[tmpName])
+            parts = net1.split(' ', 1)
+            net1 = newname + ' ' + parts[1]
+
+            net.add(net1)
+            net.remove(tmpName)
 
         return net

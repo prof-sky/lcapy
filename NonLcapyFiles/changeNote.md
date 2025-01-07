@@ -1,3 +1,7 @@
+## 1.24+inskale.0.25
+- remove solution text from solution (may brake from changes not used anymore)
+- remove latexEquation (equation is build in the ui as needed)
+
 ## 1.24+inskale.0.24
 - transparent fill for resistors to make them clickable in firefox
 - resolve solve.solve_circuit issue for Hetznecker circuit

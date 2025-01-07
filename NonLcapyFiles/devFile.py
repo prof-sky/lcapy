@@ -35,10 +35,10 @@ if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
 
 st = time.time()
-solve.solve_circuit(filename, filePath="StandardCircuits")
-# a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
+# solve.solve_circuit(filename, filePath="StandardCircuits")
+a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
 # a.createInitialStep()
-# a.simplifyTwoCpts(["R1", "R3"])
+a.simplifyNCpts(["R1", "R2", "R3"])
 # a.simplifyTwoCpts(["Rs1", "R2"])
 et = time.time()
 

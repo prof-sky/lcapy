@@ -36,30 +36,30 @@ class SolveInUserOrder:
         self.circuit = Circuit(FileToImpedance(os.path.join(filePath, filename)))
         self.steps: list[SolutionStep] = [
             SolutionStep(self.circuit, None, None, None, None, None,
-                         None, None)
+                         None)
         ]
         self.circuit.namer.reset()
 
         return
 
-    def simplifyTwoCpts(self, cpts: list) -> tuple[bool, tuple[str, str], str]:
+    def simplifyNCpts(self, cpts: list) -> tuple[bool, tuple[str, str], str]:
         """
         :param cpts: list with two component name strings to simplify ["R1", "R2"]
         :return tuple with bool if simplification is possible, str with json filename, str with svg filename
         """
         # ToDo this only works as long as only simplifiable components are selected which are represented as a
         # impedance internally in the cirucuit
-        cpts[0] = "Z" + cpts[0][1::]
-        cpts[1] = "Z" + cpts[1][1::]
+        for idx in range(0, len(cpts)):
+            cpts[idx] = "Z" + cpts[idx][1::]
 
-        if cpts[1] in self.circuit.in_series(cpts[0]):
-            newNet, newCptName = self.circuit.simplify_two_cpts(self.circuit, cpts)
-            self.steps.append(SolutionStep(newNet, cpt1=cpts[0], cpt2=cpts[1], newCptName=newCptName,
+        if all(cpt in self.circuit.in_series(cpts[0]) for cpt in cpts[1::]):
+            newNet, newCptName = self.circuit.simplify_N_cpts(self.circuit, cpts)
+            self.steps.append(SolutionStep(newNet, cpts=cpts, newCptName=newCptName,
                                            relation=ComponentRelation.series.value,
                                            solutionText=None, lastStep=None, nextStep=None))
-        elif cpts[1] in self.circuit.in_parallel(cpts[0]):
-            newNet, newCptName = self.circuit.simplify_two_cpts(self.circuit, cpts)
-            self.steps.append(SolutionStep(newNet, cpt1=cpts[0], cpt2=cpts[1], newCptName=newCptName,
+        elif all(cpt in self.circuit.in_parallel(cpts[0]) for cpt in cpts[1::]):
+            newNet, newCptName = self.circuit.simplify_N_cpts(self.circuit, cpts)
+            self.steps.append(SolutionStep(newNet, cpts=cpts, newCptName=newCptName,
                                            relation=ComponentRelation.parallel.value,
                                            solutionText=None, lastStep=None, nextStep=None))
         else:

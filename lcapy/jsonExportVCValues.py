@@ -102,5 +102,4 @@ class JsonVCValueExport(JsonExportBase):
 
     def _isInitialStep(self) -> bool:
         assert isinstance(self.solStep, SolutionStep)
-        return not (self.solStep.cpt1 and self.solStep.cpt2
-                    and self.solStep.newCptName and self.solStep.lastStep) and self.solStep
+        return not (self.solStep.cpts and self.solStep.newCptName and self.solStep.lastStep) and self.solStep

@@ -33,10 +33,10 @@ def solveInUserOrder(filename):
     test = SolveInUserOrder(filename=filename, savePath="../Solutions/", filePath="../StandardCircuits/")
     test.createInitialStep()
 
-    test.simplifyTwoCpts(["Z4", "Z5"])
-    test.simplifyTwoCpts(["Z1", "Zs1"])
-    test.simplifyTwoCpts(["Z2", "Z3"])
-    test.simplifyTwoCpts(["Zs2", "Zs3"])
+    test.simplifyNCpts(["Z4", "Z5"])
+    test.simplifyNCpts(["Z1", "Zs1"])
+    test.simplifyNCpts(["Z2", "Z3"])
+    test.simplifyNCpts(["Zs2", "Zs3"])
 
 
 def test_solve_circuits():

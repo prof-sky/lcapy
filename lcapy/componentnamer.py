@@ -33,6 +33,15 @@ class ComponentNamer(object):
                 return name
             m += 1
 
+    def tmpName(self, cpt_type, names):
+        m = 1
+        nameSet = set(list(names) + self.names)
+        while True:
+            name = cpt_type + "tmp" + str(m)
+            if name not in nameSet:
+                return name
+            m += 1
+
     def __call__(self, cpt_type, names=None):
         """Create component name based on `cpt_type` (`R`, `L`, etc.)
         and the name_kind (`anon`, `t`, etc).

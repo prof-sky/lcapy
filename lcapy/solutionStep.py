@@ -9,13 +9,11 @@ from typing import Union
 
 
 class SolutionStep:
-    def __init__(self, circuit: Circuit, cpt1: str, cpt2: str, newCptName: str,
+    def __init__(self, circuit: Circuit, cpts: list[str], newCptName: str,
                  relation: ComponentRelation, solutionText: str, lastStep: Circuit, nextStep: Circuit,
                  ):
         self.circuit: Circuit = circuit
-        self.cpt1 = cpt1
-        self.cpt2 = cpt2
-        self.cpts: list[str] = [cpt1, cpt2]
+        self.cpts: list[str] = cpts
         self.newCptName: Union[str, None] = newCptName
         self.relation: ComponentRelation = relation
         self.isInitialStep: bool = not (self.cpts or self.newCptName or self.relation)
