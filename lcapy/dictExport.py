@@ -36,48 +36,21 @@ class DictExport(DictExportBase):
         if self.vcElements:
             resElem = self.vcElements[-1]
             lwp = self.latexWithPrefix
-            as_dict = {
-                "canBeSimplified": True,
-                "simplifiedTo": {
-                    "Z": {"name": resElem.name, "complexVal": lwp(resElem.cpxVal), "val": lwp(resElem.value)},
-                    "U": {"name": resElem.uName, "val": lwp(resElem.u)},
-                    "I": {"name": resElem.iName, "val": lwp(resElem.i)},
-                    "hasConversion": resElem.hasConversion,
-                },
-                "componentsRelation": self.relation.to_string(),
-                "components": [],
-                "svgData": resElem.solStep.getImageData()
-            }
 
+            cpts = []
             for elm in self.vcElements[:-1]:
-                as_dict["components"].append(
-                    {
-                        "Z": {"name": elm.name, "complexVal": lwp(elm.cpxVal), "val": lwp(elm.value)},
-                        "U": {"name": elm.uName, "val": lwp(elm.u)},
-                        "I": {"name": elm.iName, "val": lwp(elm.i)},
-                        "hasConversion": elm.hasConversion,
-                    }
+                cpts.append(
+                    elm.toDict()
                 )
+
+            as_dict = self.exportDict(
+                True, resElem.toDict(), self.relation, resElem.solStep.getImageData(), cpts
+            )
+
             return as_dict
 
         else:
-            return {
-                "canBeSimplified": False,
-                "simplifiedTo": {
-                    "Z": {"name": None, "complexVal": None, "val": None},
-                    "U": {"name": None, "val": None},
-                    "I": {"name": None, "val": None},
-                    "hasConversion": None,
-                },
-                "componentsRelation": ComponentRelation.none.to_string(),
-                "components": [{
-                    "Z": {"name": None, "complexVal": None, "val": None},
-                    "U": {"name": None, "val": None},
-                    "I": {"name": None, "val": None},
-                    "hasConversion": None,
-                }],
-                "svgData": None
-            }
+            return self.emptyExportDict
 
     def _updateObjectValues(self, step: str, solution: 'lcapy.Solution'):
         self.solStep: 'lcapy.solutionStep' = solution[step]

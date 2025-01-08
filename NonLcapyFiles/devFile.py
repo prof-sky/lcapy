@@ -28,7 +28,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[3]
+filename = filenames[1]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -40,6 +40,7 @@ a.createInitialStep()
 a.simplifyNCpts(["Z1", "Z2", "Z3"])
 a.simplifyNCpts(["Z4", "Z5"])
 a.simplifyNCpts(["Zs1", "Zs2"])
+# ToDo pack create json files into solve.py
 # a.simplifyTwoCpts(["Rs1", "R2"])
 et = time.time()
 

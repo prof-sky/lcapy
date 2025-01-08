@@ -5,6 +5,7 @@ from lcapy.componentRelation import ComponentRelation
 from lcapy.solutionStep import SolutionStep
 import os
 from lcapy.langSymbols import LangSymbols
+from lcapy.dictExportBase import DictExportBase
 from lcapy.dictExportCircuitInfo import DictExportCircuitInfo
 
 
@@ -17,7 +18,7 @@ def solve_circuit(filename: str, filePath="Circuits/", savePath="Solutions/", la
     steps = cct.simplify_stepwise()
     sol = Solution(steps, langSymbols=langSym)
     sol.draw(path=savePath, filename=filename)
-    sol.export(path=savePath, filename=filename)
+    sol.exportAsJsonFiles(path=savePath, filename=filename)
 
 
 class SolveInUserOrder:
@@ -42,7 +43,14 @@ class SolveInUserOrder:
 
         return
 
-    def simplifyNCpts(self, cpts: list) -> tuple[bool, tuple[str, str], str]:
+    def simplifyNCptsGenFiles(self, cpts: list) -> tuple[bool, str, str]:
+        step = "step" + str(len(self.steps))
+        stepData = self.simplifyNCpts(cpts)
+        jsonName = Solution.exportStepAsJson(step, stepData, path=self.savePath, filename=os.path.splitext(self.filename)[0])
+        svgName = Solution.drawStep(step, path=self.savePath, filename=os.path.splitext(self.filename)[0])
+        return True, jsonName, svgName
+
+    def simplifyNCpts(self, cpts: list) -> dict:
         """
         :param cpts: list with two component name strings to simplify ["R1", "R2"]
         :return tuple with bool if simplification is possible, str with json filename, str with svg filename
@@ -63,34 +71,32 @@ class SolveInUserOrder:
                                            relation=ComponentRelation.parallel.value,
                                            solutionText=None, lastStep=None, nextStep=None))
         else:
-            return False, ("", ""), ""
+            return DictExportBase.emptyExportDict
 
         sol = Solution(self.steps, langSymbols=self.langSymbols)
         newestStep = sol.available_steps[-1]
 
-        jsonName = sol.exportStepAsJson(newestStep, path=self.savePath, filename=os.path.splitext(self.filename)[0])
-        svgName = sol.drawStep(newestStep, path=self.savePath, filename=os.path.splitext(self.filename)[0])
-
+        stepData = sol.exportStepAsDict(newestStep)
+        print(stepData)
         self.circuit = newNet
-        return True, jsonName, svgName
+        return stepData
 
-    def createInitialStep(self) -> tuple[bool, tuple[str, str], str]:
+    def createInitialStep(self) -> dict:
         """
         create the initial step or step0 of the circuit
         :return tuple with bool if simplification is possible, str with json filename, str with svg filename
         """
 
         sol = Solution(self.steps, langSymbols=self.langSymbols)
-        nameStep0Json = sol.exportStepAsJson("step0", path=self.savePath, filename=self.filename)
-        nameStep0Svg = sol.drawStep('step0', filename=self.filename, path=self.savePath)
+        stepData = sol.exportStepAsDict("step0")
 
-        return True, nameStep0Json, nameStep0Svg
+        return stepData
 
     def createCircuitInfo(self) -> str:
         sol = Solution(self.steps)
         return sol.exportCircuitInfo("step0", path=self.savePath, filename=self.filename)
 
-    def createStep0(self) -> tuple[bool, tuple[str, str], str]:
+    def createStep0(self) -> dict:
         return self.createInitialStep()
 
     def getSolution(self):

@@ -5,6 +5,7 @@ from typing import Union
 from sympy import Mul
 from lcapy import Expr
 from lcapy.unitPrefixer import SIUnitPrefixer
+from lcapy.componentRelation import ComponentRelation
 
 
 class DictExportBase:
@@ -66,3 +67,44 @@ class DictExportBase:
 
     def getDictForStep(self, step, solution: 'lcapy.Solution'):
         raise NotImplementedError("Implement in Child class")
+
+    @property
+    def emptyExportDict(self) -> dict:
+        return {
+                "canBeSimplified": False,
+                "simplifiedTo": {
+                    "Z": {"name": None, "complexVal": None, "val": None},
+                    "U": {"name": None, "val": None},
+                    "I": {"name": None, "val": None},
+                    "hasConversion": None,
+                },
+                "componentsRelation": ComponentRelation.none.to_string(),
+                "components": [{
+                    "Z": {"name": None, "complexVal": None, "val": None},
+                    "U": {"name": None, "val": None},
+                    "I": {"name": None, "val": None},
+                    "hasConversion": None,
+                }],
+                "svgData": None
+            }
+
+    @staticmethod
+    def exportDict(canBeSimplified: bool, simplifiedTo: dict, componentsRelation: ComponentRelation, svgData: str,
+                   cpts: list[dict]) -> dict:
+
+        return {
+            "canBeSimplified": canBeSimplified,  # bool
+            "simplifiedTo": simplifiedTo,
+            "componentsRelation": componentsRelation.to_string(),
+            "components": cpts,
+            "svgData": svgData
+        }
+
+    @staticmethod
+    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal, hasConversion: bool) -> dict:
+        return {
+            "Z": {"name": rName, "complexVal": zComplexVal, "val": zVal},
+            "U": {"name": uName, "val": uVal},
+            "I": {"name": iName, "val": iVal},
+            "hasConversion": hasConversion
+        }

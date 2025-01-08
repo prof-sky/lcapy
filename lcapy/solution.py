@@ -219,22 +219,76 @@ class Solution:
 
         return fullPathName
 
-    def exportStepAsJson(self, step, path: str = None, filename: str ="circuit", debug: bool = False,
-                         ) -> tuple[str, str]:
+    def exportStepAsDict(self, step) -> dict:
         """
-        saves a step as a .json File with the following information:
-        name1 and name2 -> names of the simplified components
-        newName -> name of the simplified component/ new component
-        relation -> if the simplification was parallel or in series
-        value1 and value2 -> the value of the component e.g. 10 ohm or 10 F ...
-        result -> the value of the new Component
-        hasConversion -> if a value is transformed to or from impedance
-        convVal1, convVal2, convResult -> the value that was transformed from
+        {
+            "canBeSimplified": "True/False",  # bool
+            "simplifiedTo": {
+                "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                "U": {"name": "Us1", "val": "voltageVal"},
+                "I": {"name": "Is1", "val": "currentVal"},
+                "hasConversion": True/False # bool
+            },
+            "componentsRelation": "series...",
+            "components": [
+                # cpt1
+                {
+                    "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                    "U": {"name": "Us1", "val": "voltageVal"},
+                    "I": {"name": "Is1", "val": "currentVal"},
+                    "hasConversion": True/False # bool
+                },
+                # cpt2
+                {
+                    "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                    "U": {"name": "Us1", "val": "voltageVal"},
+                    "I": {"name": "Is1", "val": "currentVal"},
+                    "hasConversion": True/False # bool
+                }
+            ],
+            "svgData": "svgDataString"
+        }
+        :param step: the step that is exported as the jason
+        :return:
+        """
+        return DictExport(voltSym=self.langSymbols.volt).getDictForStep(step, self)
 
+    @staticmethod
+    def exportStepAsJson(step: str, stepData: dict, path: str = None, filename: str ="circuit", debug: bool = False,
+                         ) -> str:
+        """
+            {
+                "canBeSimplified": "True/False",  # bool
+                "simplifiedTo": {
+                    "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                    "U": {"name": "Us1", "val": "voltageVal"},
+                    "I": {"name": "Is1", "val": "currentVal"},
+                    "hasConversion": True/False # bool
+                },
+                "componentsRelation": "series...",
+                "components": [
+                    # cpt1
+                    {
+                        "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                        "U": {"name": "Us1", "val": "voltageVal"},
+                        "I": {"name": "Is1", "val": "currentVal"},
+                        "hasConversion": True/False # bool
+                    },
+                    # cpt2
+                    {
+                        "Z": {"name": "Rs1", "complexVal": "cplxVal", "val": "bslVal"},  # val = null if not convertible
+                        "U": {"name": "Us1", "val": "voltageVal"},
+                        "I": {"name": "Is1", "val": "currentVal"},
+                        "hasConversion": True/False # bool
+                    }
+                ],
+                "svgData": "svgDataString"
+            }
 
         raises a value Error if information is missing in a step use try/except or when Path does not point to a file
+        :param step: string with step name e.g. step0, step1 ...
         :param debug: if ture print the dictionary that is used for creating the json file
-        :param step: a step name e.g. step0, step1, step2, ..., step<n>
+        :param stepData: the data from exportStepAsDict
         :param path:  path to save the json-File in if None save in current directory
         :param filename: svg-File will be named <filename>_step<n>.svg n = 0 | 1 | ...| len(availableSteps)
         :param simpStep: if true simplification step info is exported, which components got combined and
@@ -250,20 +304,17 @@ class Solution:
         Solution.check_path(path)
         filename = os.path.splitext(filename)[0]
 
-        jsonExport = DictExport(voltSym=self.langSymbols.volt)
-        as_dict = jsonExport.getDictForStep(step, self)
-
         if debug:
-            print(as_dict)
+            print(stepData)
 
-        fullPathNameCV = os.path.join(path, filename) + "_" + step + ".json"
-        with open(fullPathNameCV, "w", encoding="utf-8") as f:
-            json.dump(as_dict, f, ensure_ascii=False, indent=4)
+        fullPathName = os.path.join(path, filename) + "_" + step + ".json"
+        with open(fullPathName, "w", encoding="utf-8") as f:
+            json.dump(stepData, f, ensure_ascii=False, indent=4)
 
-        return fullPathNameCV
+        return fullPathName
 
-    def export(self, path: str = None, filename: str = "circuit", debug: bool = False,
-               simpStep: bool = True, cvStep: bool = True):
+    def exportAsJsonFiles(self, path: str = None, filename: str = "circuit", debug: bool = False,
+                          simpStep: bool = True, cvStep: bool = True):
         """
         save a json-File for each step in available_steps.
         Files are named step<n> n = 0, 1 ..., len(availableSteps)
@@ -280,4 +331,15 @@ class Solution:
         """
 
         for step in self.available_steps:
-            self.exportStepAsJson(step, path=path, filename=filename, debug=debug)
+            stepData = self.exportStepAsDict(step)
+            self.exportStepAsJson(step, stepData, path=path, filename=filename, debug=debug)
+
+    def exportAsDicts(self) -> list[dict]:
+        """
+        :return: list of dictionaries, list contains each step as a dict for details of dict see exportStepAsDict
+        """
+        dicts = []
+        for step in self.available_steps:
+            dicts.append(self.exportStepAsDict(step))
+
+        return dicts
