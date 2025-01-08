@@ -23,3 +23,6 @@ class SolutionStep:
 
     def draw(self):
         DrawWithSchemdraw(self.circuit).draw()
+
+    def getImageData(self):
+        DrawWithSchemdraw(self.circuit).getImageData()
