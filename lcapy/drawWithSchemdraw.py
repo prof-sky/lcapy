@@ -9,7 +9,7 @@ from lcapy.impedanceConverter import ImpedanceToComponent
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy.unitPrefixer import SIUnitPrefixer
-from lcapy.jsonExportBase import JsonExportBase
+from lcapy.dictExportBase import DictExportBase
 from lcapy.langSymbols import LangSymbols
 
 
@@ -52,7 +52,7 @@ class DrawWithSchemdraw:
             self.netLines.append(NetlistLine(line))
 
         self.prefixer = SIUnitPrefixer()
-        self.jsonExportBase = JsonExportBase(precision=3)
+        self.jsonExportBase = DictExportBase(precision=3)
 
     def latexStr(self, line: NetlistLine):
         if line.value is None or line.type is None:

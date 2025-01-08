@@ -7,7 +7,7 @@ from lcapy import Expr
 from lcapy.unitPrefixer import SIUnitPrefixer
 
 
-class JsonExportBase:
+class DictExportBase:
     def __init__(self, precision: int, voltSym='U'):
         self.precision = precision
         self.prefixer = SIUnitPrefixer()

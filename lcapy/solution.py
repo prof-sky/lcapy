@@ -12,9 +12,8 @@ from warnings import warn
 from lcapy import state
 from lcapy.mnacpts import R, L, C, Z
 from lcapy import DrawWithSchemdraw
-from lcapy.jsonExportCompValue import JsonCompValueExport
-from lcapy.jsonExportVCValues import JsonVCValueExport
-from lcapy.jsonExportCircuitInfo import JsonExportCircuitInfo
+from lcapy.dictExport import DictExport
+from lcapy.dictExportCircuitInfo import DictExportCircuitInfo
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from typing import Union
 from lcapy.langSymbols import LangSymbols
@@ -208,7 +207,7 @@ class Solution:
         self.check_path(path)
         filename = os.path.splitext(filename)[0]
 
-        jsonExport = JsonExportCircuitInfo()
+        jsonExport = DictExportCircuitInfo()
         as_dict = jsonExport.getDictForStep(step, self)
 
         if debug:
@@ -221,7 +220,7 @@ class Solution:
         return fullPathName
 
     def exportStepAsJson(self, step, path: str = None, filename: str ="circuit", debug: bool = False,
-                         simpStep: bool = True, cvStep: bool = True) -> tuple[str, str]:
+                         ) -> tuple[str, str]:
         """
         saves a step as a .json File with the following information:
         name1 and name2 -> names of the simplified components
@@ -248,39 +247,20 @@ class Solution:
         if path is None:
             path = ""
 
-        if not simpStep and not cvStep:
-            raise AssertionError("simpStep or cvStep have to be True")
-
         Solution.check_path(path)
         filename = os.path.splitext(filename)[0]
 
-        if simpStep:
-            jsonExport = JsonCompValueExport()
-            as_dict = jsonExport.getDictForStep(step, self)
+        jsonExport = DictExport(voltSym=self.langSymbols.volt)
+        as_dict = jsonExport.getDictForStep(step, self)
 
-            if debug:
-                print(as_dict)
+        if debug:
+            print(as_dict)
 
-            fullPathName = os.path.join(path, filename) + "_" + step + ".json"
-            with open(fullPathName, "w", encoding="utf-8") as f:
-                json.dump(as_dict, f, ensure_ascii=False, indent=4)
-        else:
-            fullPathName = ""
+        fullPathNameCV = os.path.join(path, filename) + "_" + step + ".json"
+        with open(fullPathNameCV, "w", encoding="utf-8") as f:
+            json.dump(as_dict, f, ensure_ascii=False, indent=4)
 
-        if cvStep:
-            jsonExport = JsonVCValueExport(voltSym=self.langSymbols.volt)
-            as_dict = jsonExport.getDictForStep(step, self)
-
-            if debug:
-                print(as_dict)
-
-            fullPathNameCV = os.path.join(path, filename) + "_" + step + "_VC" + ".json"
-            with open(fullPathNameCV, "w", encoding="utf-8") as f:
-                json.dump(as_dict, f, ensure_ascii=False, indent=4)
-        else:
-            fullPathNameCV = ""
-
-        return fullPathName, fullPathNameCV
+        return fullPathNameCV
 
     def export(self, path: str = None, filename: str = "circuit", debug: bool = False,
                simpStep: bool = True, cvStep: bool = True):

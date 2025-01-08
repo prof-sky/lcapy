@@ -4,7 +4,7 @@ from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy import t
 
 
-class VCElement:
+class DictExportElement:
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
                  omega_0, compName: str, prefixer: 'lcapy.unitPrefixer.SiUnitPrefixer', voltSym="U"):
         self.circuit = circuit
@@ -15,22 +15,22 @@ class VCElement:
         self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
         self.uName = voltSym + self.suffix
         self.iName = 'I' + self.suffix
-        self._value, self._convValue, compType = self._convertValue(self.circuit[compName].Z)
+        self._cpxValue, self._value, self.compType = self._convertValue(self.circuit[compName].Z)
         self._i = self.circuit[compName].I(t)
         self._u = self.circuit[compName].V(t)
-        self.name = compType + self.suffix
+        self.name = self.compType + self.suffix
 
-    def _convertValue(self, value) -> tuple:
-        convValue, convCompType = ValueToComponent(value, self.omega_0)
-        return value, uwa.addUnit(convValue, convCompType), convCompType
+    def _convertValue(self, cpxVal) -> tuple:
+        convValue, convCompType = ValueToComponent(cpxVal, self.omega_0)
+        return cpxVal, uwa.addUnit(convValue, convCompType), convCompType
 
     @property
     def value(self):
         return self.prefixer.getSIPrefixedExpr(self._value)
 
     @property
-    def convVal(self):
-        return self.prefixer.getSIPrefixedExpr(self._convValue)
+    def cpxVal(self):
+        return self.prefixer.getSIPrefixedExpr(self._cpxValue)
 
     @property
     def i(self):
@@ -39,3 +39,7 @@ class VCElement:
     @property
     def u(self):
         return self.prefixer.getSIPrefixedExpr(self._u)
+
+    @property
+    def hasConversion(self) -> bool:
+        return not self.compType == "Z"

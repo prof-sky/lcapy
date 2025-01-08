@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from lcapy.circuit import Circuit
-    from lcapy import DrawWithSchemdraw
 
 from lcapy.componentRelation import ComponentRelation
 from typing import Union
@@ -22,7 +21,9 @@ class SolutionStep:
         self.nextStep: Union[Circuit, None] = nextStep
 
     def draw(self):
+        from lcapy.drawWithSchemdraw import DrawWithSchemdraw
         DrawWithSchemdraw(self.circuit).draw()
 
-    def getImageData(self):
-        DrawWithSchemdraw(self.circuit).getImageData()
+    def getImageData(self) -> str:
+        from lcapy.drawWithSchemdraw import DrawWithSchemdraw
+        return DrawWithSchemdraw(self.circuit).getImageData()

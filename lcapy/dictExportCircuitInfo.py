@@ -1,4 +1,4 @@
-from lcapy.jsonExportBase import JsonExportBase
+from lcapy.dictExportBase import DictExportBase
 from sympy.physics.units import Hz
 from lcapy import Circuit
 from sympy import parse_expr, pi, Mul
@@ -8,7 +8,7 @@ from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy.netlistLine import NetlistLine
 
 
-class JsonExportCircuitInfo(JsonExportBase):
+class DictExportCircuitInfo(DictExportBase):
     def __init__(self, precision=3):
         super().__init__(precision)
         self.omega_0 = None

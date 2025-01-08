@@ -1,12 +1,13 @@
+import warnings
 import lcapy
 from lcapy.componentRelation import ComponentRelation
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
 from lcapy.solutionStep import SolutionStep
-from lcapy.jsonExportBase import JsonExportBase
-from lcapy.jsonExportVCElement import VCElement
+from lcapy.dictExportBase import DictExportBase
+from lcapy.DictExportElement import DictExportElement
 
 
-class JsonVCValueExport(JsonExportBase):
+class DictExport(DictExportBase):
     """
     Jason Volt Current Value Export
     Creates a json-File with information about the Voltage and Current values for one step
@@ -25,7 +26,7 @@ class JsonVCValueExport(JsonExportBase):
         self.simpCircuit: 'lcapy.Circuit' = None
         self.omega_0 = None
 
-        self.vcElements: list[VCElement] = []
+        self.vcElements: list[DictExportElement] = []
         self.relation: ComponentRelation = ComponentRelation.none
         self.valueFieldKeys = self._getValueFieldKeys("val")
 
@@ -33,48 +34,50 @@ class JsonVCValueExport(JsonExportBase):
         self._updateObjectValues(step, solution)
 
         if self.vcElements:
-            elm0 = self.vcElements[0]
-            elm1 = self.vcElements[1]
-            elm2 = self.vcElements[2]
-
+            resElem = self.vcElements[-1]
+            lwp = self.latexWithPrefix
             as_dict = {
-                'oldNames': [elm2.name, elm2.uName, elm2.iName],
-                'names1': [elm0.name, elm0.uName, elm0.iName],
-                'names2': [elm1.name, elm1.uName, elm1.iName],
-                'oldValues': [elm2.value, elm2.u, elm2.i],
-                'values1': [elm0.value, elm0.u, elm0.i],
-                'values2': [elm1.value, elm1.u, elm1.i],
-                'convOldValue': [elm2.convVal],
-                'convValue1': [elm0.convVal],
-                'convValue2': [elm1.convVal],
-                'relation': [self.relation.to_string()],
-                'equation': [None, None]
+                "canBeSimplified": True,
+                "simplifiedTo": {
+                    "Z": {"name": resElem.name, "complexVal": lwp(resElem.cpxVal), "val": lwp(resElem.value)},
+                    "U": {"name": resElem.uName, "val": lwp(resElem.u)},
+                    "I": {"name": resElem.iName, "val": lwp(resElem.i)},
+                    "hasConversion": resElem.hasConversion,
+                },
+                "componentsRelation": self.relation.to_string(),
+                "components": [],
+                "svgData": resElem.solStep.getImageData()
             }
 
-            try:
-                for key in ['oldValues', 'values1', 'values2', 'convOldValue', 'convValue1', 'convValue2']:
-                    assert isinstance(as_dict[key], list)
-                    for idx, val in enumerate(as_dict[key]):
-                        if as_dict[key][idx] is not None:
-                            as_dict[key][idx] = self.latexWithPrefix(val)
-            except KeyError:
-                raise AssertionError(f"A filed which name includes val or Val is not in the export dict. Key: {key}")
+            for elm in self.vcElements[:-1]:
+                as_dict["components"].append(
+                    {
+                        "Z": {"name": elm.name, "complexVal": lwp(elm.cpxVal), "val": lwp(elm.value)},
+                        "U": {"name": elm.uName, "val": lwp(elm.u)},
+                        "I": {"name": elm.iName, "val": lwp(elm.i)},
+                        "hasConversion": elm.hasConversion,
+                    }
+                )
+            return as_dict
+
         else:
-            as_dict = {
-                'oldNames': [None, None, None],
-                'names1': [None, None, None],
-                'names2': [None, None, None],
-                'oldValues': [None, None, None],
-                'values1': [None, None, None],
-                'values2': [None, None, None],
-                'convOldValue': [None],
-                'convValue1': [None],
-                'convValue2': [None],
-                'relation': [None],
-                'equation': [None, None]
+            return {
+                "canBeSimplified": False,
+                "simplifiedTo": {
+                    "Z": {"name": None, "complexVal": None, "val": None},
+                    "U": {"name": None, "val": None},
+                    "I": {"name": None, "val": None},
+                    "hasConversion": None,
+                },
+                "componentsRelation": ComponentRelation.none.to_string(),
+                "components": [{
+                    "Z": {"name": None, "complexVal": None, "val": None},
+                    "U": {"name": None, "val": None},
+                    "I": {"name": None, "val": None},
+                    "hasConversion": None,
+                }],
+                "svgData": None
             }
-
-        return as_dict
 
     def _updateObjectValues(self, step: str, solution: 'lcapy.Solution'):
         self.solStep: 'lcapy.solutionStep' = solution[step]
@@ -85,11 +88,11 @@ class JsonVCValueExport(JsonExportBase):
             self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+1 elements)
 
             for name in solution[step].cpts:
-                self.vcElements.append(VCElement(self.solStep, self.circuit, self.omega_0, name, self.prefixer,
-                                                 self.voltSym))
+                self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.prefixer,
+                                                         self.voltSym))
             self.vcElements.append(
-                VCElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.prefixer,
-                          self.voltSym))
+                DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.prefixer,
+                                  self.voltSym))
             self._updateCompRel()
 
     def _updateCompRel(self):
