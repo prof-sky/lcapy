@@ -1,4 +1,4 @@
-# for lcapy version: 1.24+inskale.0.24
+# for lcapy version: 1.24+inskale.0.25
 from lcapy import Circuit, FileToImpedance, DrawWithSchemdraw
 from lcapy.solution import Solution
 from lcapy.componentRelation import ComponentRelation
@@ -41,6 +41,9 @@ class SolveInUserOrder:
         self.circuit.namer.reset()
 
         return
+
+    def simplifyTwoCpts(self, cpts: list):
+        self.simplifyNCpts(cpts[0:2])
 
     def simplifyNCpts(self, cpts: list) -> tuple[bool, tuple[str, str], str]:
         """
