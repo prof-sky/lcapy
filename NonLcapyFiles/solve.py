@@ -42,9 +42,6 @@ class SolveInUserOrder:
 
         return
 
-    def simplifyTwoCpts(self, cpts: list):
-        self.simplifyNCpts(cpts[0:2])
-
     def simplifyNCpts(self, cpts: list) -> tuple[bool, tuple[str, str], str]:
         """
         :param cpts: list with two component name strings to simplify ["R1", "R2"]
