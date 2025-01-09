@@ -11,7 +11,18 @@ from json import dump as jdump
 
 
 class ExportDict(dict):
-    def toFiles(self, savePath, fileName):
+    save_path = None
+    file_name = None
+
+    @classmethod
+    def set_paths(cls, savePath, fileName):
+        cls.save_path = savePath
+        cls.file_name = fileName
+
+    def toFiles(self, savePath=None, fileName=None):
+        savePath = savePath if savePath else self.save_path
+        fileName = fileName if fileName else self.file_name
+
         if not self["step"] or not self["svgData"]:
             raise RuntimeError(f"To file only works when svgData and a step name is available:"
                                f" stepVal: {self['step']}"

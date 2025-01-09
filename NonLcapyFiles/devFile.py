@@ -4,6 +4,7 @@ import solve
 import time
 from datetime import datetime
 from lcapy.validateCircuitFile import ValidateCircuitFile
+from lcapy.dictExportBase import ExportDict
 
 
 filenames = ["Circuit_inductors.txt",  # 0
@@ -36,10 +37,12 @@ if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
 st = time.time()
 # solve.solve_circuit(filename, filePath="StandardCircuits")
 a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
-a.createInitialStep().toFiles(savePath=a.savePath, fileName=a.filename)
-a.simplifyNCpts(["Z1", "Z2", "Z3"]).toFiles(savePath=a.savePath, fileName=a.filename)
-a.simplifyNCpts(["Z4", "Z5"]).toFiles(savePath=a.savePath, fileName=a.filename)
-a.simplifyNCpts(["Zs1", "Zs2"]).toFiles(savePath=a.savePath, fileName=a.filename)
+ExportDict.set_paths(a.savePath, a.filename)
+
+a.createInitialStep().toFiles()
+a.simplifyNCpts(["Z1", "Z2", "Z3"]).toFiles()
+a.simplifyNCpts(["Z4", "Z5"]).toFiles()
+a.simplifyNCpts(["Zs1", "Zs2"]).toFiles()
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
