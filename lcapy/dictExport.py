@@ -1,10 +1,10 @@
-import warnings
 import lcapy
 from lcapy.componentRelation import ComponentRelation
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
 from lcapy.solutionStep import SolutionStep
 from lcapy.dictExportBase import DictExportBase
 from lcapy.DictExportElement import DictExportElement
+from lcapy.dictExportBase import ExportDict
 
 
 class DictExport(DictExportBase):
@@ -25,29 +25,33 @@ class DictExport(DictExportBase):
         self.circuit: 'lcapy.Circuit' = None
         self.simpCircuit: 'lcapy.Circuit' = None
         self.omega_0 = None
+        self.imageData = None
 
         self.vcElements: list[DictExportElement] = []
         self.relation: ComponentRelation = ComponentRelation.none
         self.valueFieldKeys = self._getValueFieldKeys("val")
 
-    def getDictForStep(self, step: str, solution: 'lcapy.Solution') -> dict:
+    def getDictForStep(self, step: str, solution: 'lcapy.Solution') -> ExportDict:
         self._updateObjectValues(step, solution)
 
         if self.vcElements:
             resElem = self.vcElements[-1]
-            lwp = self.latexWithPrefix
 
             cpts = []
             for elm in self.vcElements[:-1]:
-                cpts.append(
-                    elm.toDict()
-                )
+                cpts.append(elm.toDict())
 
-            as_dict = self.exportDict(
-                True, resElem.toDict(), self.relation, resElem.solStep.getImageData(), cpts
+            stepData = self.exportDict(
+                step, True, resElem.toDict(), self.relation, self.imageData, cpts
             )
 
-            return as_dict
+            return stepData
+
+        elif step == "step0":
+            stepData = self.emptyExportDict
+            stepData["step"] = "step0"
+            stepData["svgData"] = self.imageData
+            return stepData
 
         else:
             return self.emptyExportDict
@@ -56,6 +60,7 @@ class DictExport(DictExportBase):
         self.solStep: 'lcapy.solutionStep' = solution[step]
         self.simpCircuit: 'lcapy.Circuit' = solution[step].circuit  # circuit with less elements (n elements)
         self.omega_0 = getOmegaFromCircuit(self.simpCircuit, getSourcesFromCircuit(self.simpCircuit))
+        self.imageData = solution[step].getImageData()
 
         if not self._isInitialStep():
             self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+1 elements)

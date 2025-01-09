@@ -1,11 +1,9 @@
 from lcapy.dictExportBase import DictExportBase
 from sympy.physics.units import Hz
-from lcapy import Circuit
 from sympy import parse_expr, pi, Mul
 from lcapy import omega0
-from lcapy.impedanceConverter import ComponentToImpedance, ValueToComponent
+from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
-from lcapy.netlistLine import NetlistLine
 
 
 class DictExportCircuitInfo(DictExportBase):

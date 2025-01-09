@@ -6,6 +6,27 @@ from sympy import Mul
 from lcapy import Expr
 from lcapy.unitPrefixer import SIUnitPrefixer
 from lcapy.componentRelation import ComponentRelation
+import os
+from json import dump as jdump
+
+
+class ExportDict(dict):
+    def toFiles(self, savePath, fileName):
+        if not self["step"] or not self["svgData"]:
+            raise RuntimeError(f"To file only works when svgData and a step name is available:"
+                               f" stepVal: {self['step']}"
+                               f" svgData: {self['svgData']}")
+        step = self["step"]
+        jsonFilePath = os.path.join(savePath, fileName) + "_" + step + ".json"
+        with open(jsonFilePath, "w", encoding="utf-8") as f:
+            jdump(self, f, ensure_ascii=False, indent=4)
+
+        svgFilePath = os.path.join(savePath, fileName) + "_" + step + ".svg"
+        svgFile = open(svgFilePath, "w", encoding="utf8")
+        svgFile.write(self["svgData"])
+        svgFile.close()
+
+        return True, jsonFilePath, svgFilePath
 
 
 class DictExportBase:
@@ -69,8 +90,9 @@ class DictExportBase:
         raise NotImplementedError("Implement in Child class")
 
     @property
-    def emptyExportDict(self) -> dict:
-        return {
+    def emptyExportDict(self) -> ExportDict:
+        return ExportDict({
+                "step": None,
                 "canBeSimplified": False,
                 "simplifiedTo": {
                     "Z": {"name": None, "complexVal": None, "val": None},
@@ -86,25 +108,27 @@ class DictExportBase:
                     "hasConversion": None,
                 }],
                 "svgData": None
-            }
+            })
 
     @staticmethod
-    def exportDict(canBeSimplified: bool, simplifiedTo: dict, componentsRelation: ComponentRelation, svgData: str,
-                   cpts: list[dict]) -> dict:
+    def exportDict(step: str, canBeSimplified: bool, simplifiedTo: dict, componentsRelation: ComponentRelation,
+                   svgData: str, cpts: list[dict]) -> ExportDict:
 
-        return {
+        return ExportDict({
+            "step": step,
             "canBeSimplified": canBeSimplified,  # bool
             "simplifiedTo": simplifiedTo,
             "componentsRelation": componentsRelation.to_string(),
             "components": cpts,
             "svgData": svgData
-        }
+        })
 
     @staticmethod
-    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal, hasConversion: bool) -> dict:
-        return {
+    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal, hasConversion: bool) -> ExportDict:
+        return ExportDict({
             "Z": {"name": rName, "complexVal": zComplexVal, "val": zVal},
             "U": {"name": uName, "val": uVal},
             "I": {"name": iName, "val": iVal},
             "hasConversion": hasConversion
-        }
+        })
+

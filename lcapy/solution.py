@@ -17,6 +17,7 @@ from lcapy.dictExportCircuitInfo import DictExportCircuitInfo
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from typing import Union
 from lcapy.langSymbols import LangSymbols
+from lcapy.dictExportBase import ExportDict
 
 
 class Solution:
@@ -200,7 +201,7 @@ class Solution:
         return os.path.join(path, filename + f"_{step}.svg")
 
     def exportCircuitInfo(self, step, path: str = None, filename: str ="circuit", debug: bool = False,
-                         simpStep: bool = True, cvStep: bool = True) -> str:
+                         ) -> str:
         if path is None:
             path = ""
 
@@ -219,7 +220,7 @@ class Solution:
 
         return fullPathName
 
-    def exportStepAsDict(self, step) -> dict:
+    def exportStepAsDict(self, step) -> ExportDict:
         """
         {
             "canBeSimplified": "True/False",  # bool
