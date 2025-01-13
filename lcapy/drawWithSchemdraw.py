@@ -122,6 +122,8 @@ class DrawWithSchemdraw:
         savePath = os.path.join(path, saveName)
         svgFile = open(savePath, 'w')
         svgFile.write(self.getImageData())
+        svgFile.close()
+
         return savePath
 
     def getImageData(self, maxDrawingIterations: int = 100) -> str:
