@@ -193,16 +193,16 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(label, ofst=0.2, class_='EL'), line)
-        curLabel = elm.CurrentLabelInline(direction='in', class_="arrow").at(sdElement)
-        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow", ofst=0.15).at(sdElement)
+        self.addElement(sdElement.label(label, ofst=0.2, class_='EL ' + label), line)
+        curLabel = elm.CurrentLabelInline(direction='in', class_="arrow " + label).at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow " + label, ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
-            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='arrow'))
-            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='arrow'))
+            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='arrow ' + "I"+self.text.total))
+            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='arrow ' + self.text.volt+self.text.total))
         elif not line.type == "W":
-            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='arrow'))
-            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='arrow'))
+            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='arrow ' + "I" + id_[1:]))
+            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='arrow ' + self.text.volt + id_[1:]))
 
     def add_connection_dots(self):
         """
