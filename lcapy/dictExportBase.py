@@ -19,25 +19,39 @@ class ExportDict(dict):
         cls.save_path = savePath
         cls.file_name = fileName
 
-    def toFiles(self, savePath=None, fileName=None):
-        savePath = savePath if savePath else self.save_path
-        fileName = fileName if fileName else self.file_name
-
+    def _errorHandling(self):
         if not self["step"] or not self["svgData"]:
             raise RuntimeError(f"To file only works when svgData and a step name is available:"
                                f" stepVal: {self['step']}"
                                f" svgData: {self['svgData']}")
-        step = self["step"]
-        jsonFilePath = os.path.join(savePath, fileName) + "_" + step + ".json"
-        with open(jsonFilePath, "w", encoding="utf-8") as f:
-            jdump(self, f, ensure_ascii=False, indent=4)
 
+    def toFiles(self, savePath=None, fileName=None):
+
+        return True, self.toJSON(), self.toSVG()
+
+    def toSVG(self, savePath=None, fileName=None) -> str:
+        savePath = savePath if savePath else self.save_path
+        fileName = fileName if fileName else self.file_name
+        self._errorHandling()
+
+        step = self["step"]
         svgFilePath = os.path.join(savePath, fileName) + "_" + step + ".svg"
         svgFile = open(svgFilePath, "w", encoding="utf8")
         svgFile.write(self["svgData"])
         svgFile.close()
 
-        return True, jsonFilePath, svgFilePath
+        return svgFilePath
+
+    def toJSON(self, savePath=None, fileName=None) -> str:
+        savePath = savePath if savePath else self.save_path
+        fileName = fileName if fileName else self.file_name
+
+        step = self["step"]
+        jsonFilePath = os.path.join(savePath, fileName) + "_" + step + ".json"
+        with open(jsonFilePath, "w", encoding="utf-8") as f:
+            jdump(self, f, ensure_ascii=False, indent=4)
+
+        return jsonFilePath
 
 
 class DictExportBase:
