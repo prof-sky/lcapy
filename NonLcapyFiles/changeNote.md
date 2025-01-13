@@ -1,3 +1,7 @@
+## 1.24+inskale.0.26
+- return dict not files
+- accept n elements for simplification
+
 ## 1.24+inskale.0.25
 - remove solution text from solution (may brake from changes not used anymore)
 - remove latexEquation (equation is build in the ui as needed)

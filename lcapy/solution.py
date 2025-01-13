@@ -254,8 +254,7 @@ class Solution:
         """
         return DictExport(voltSym=self.langSymbols.volt).getDictForStep(step, self)
 
-    @staticmethod
-    def exportStepAsJson(step: str, stepData: dict, path: str = None, filename: str ="circuit", debug: bool = False,
+    def exportStepAsJson(self, step: str, path: str = None, filename: str ="circuit", debug: bool = False,
                          ) -> str:
         """
             {
@@ -305,6 +304,8 @@ class Solution:
         Solution.check_path(path)
         filename = os.path.splitext(filename)[0]
 
+        stepData = self.exportStepAsDict(step)
+
         if debug:
             print(stepData)
 
@@ -333,7 +334,7 @@ class Solution:
 
         for step in self.available_steps:
             stepData = self.exportStepAsDict(step)
-            self.exportStepAsJson(step, stepData, path=path, filename=filename, debug=debug)
+            self.exportStepAsJson(step, path=path, filename=filename, debug=debug)
 
     def exportAsDicts(self) -> list[dict]:
         """

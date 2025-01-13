@@ -62,40 +62,20 @@ class TestJsonExport:
                                          "RLC")
         self.removeDir()
 
-    def helperJsonCompValueExport(self, fileName: str, filePath: str, savePath: str):
+    def helperJsonExport(self, fileName: str, filePath: str, savePath: str):
         cct = Circuit(FileToImpedance(os.path.join(filePath, fileName)))
         cct.namer.reset()
         steps = cct.simplify_stepwise()
         sol = Solution(steps)
         for step in sol.available_steps:
-            jsonFileName, _ = sol.exportStepAsJson(step, path=savePath, filename=fileName, simpStep=True, cvStep=False)
+            jsonFileName = sol.exportStepAsJson(step, path=savePath, filename=fileName)
             data = self.readJson(jsonFileName)
-            for key in ["cptNames", "newCptName", "relation",
-                        "cptValues", "newCptVal",
-                        "hasConversion", "convCptVals", "convNewCptVal"]:
-                assert key in data.keys(), f"filename: {jsonFileName}"
+            for key in ["step", "canBeSimplified", "simplifiedTo", "componentsRelation",
+                        "components", "svgData"]:
+                assert key in data.keys(), f"filename: {jsonFileName} dataKey {key} is missing"
 
-    def test_JsonCompValueExport(self):
+    def test_JsonExport(self):
         self.makeTestDir()
         for filename in os.listdir(".\\Schematics"):
-            self.helperJsonCompValueExport(filename, ".\\Schematics", ".\\tempTest")
-        self.removeDir()
-
-    def helperJsonVCValueExport(self, fileName: str, filePath: str, savePath: str):
-        cct = Circuit(FileToImpedance(os.path.join(filePath, fileName)))
-        cct.namer.reset()
-        steps = cct.simplify_stepwise()
-        sol = Solution(steps)
-        for step in sol.available_steps:
-            _, jsonFileName = sol.exportStepAsJson(step, path=savePath, filename=fileName, simpStep=False, cvStep=True)
-            data = self.readJson(jsonFileName)
-            for key in ["oldNames", "names1", "names2", "oldValues",
-                        "values1", "values2", "convOldValue", "convValue1",
-                        "convValue2", "relation", "equation"]:
-                assert key in data.keys(), f"filename: {jsonFileName}"
-
-    def test_JsonVCValueExport(self):
-        self.makeTestDir()
-        for filename in os.listdir(".\\Schematics"):
-            self.helperJsonVCValueExport(filename, ".\\Schematics", ".\\tempTest")
+            self.helperJsonExport(filename, ".\\Schematics", ".\\tempTest")
         self.removeDir()
