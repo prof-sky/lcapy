@@ -1,3 +1,5 @@
+import pyodide
+
 import lcapy
 from lcapy.componentRelation import ComponentRelation
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
@@ -48,10 +50,7 @@ class DictExport(DictExportBase):
             return stepData
 
         elif step == "step0":
-            stepData = self.emptyExportDict
-            stepData["step"] = "step0"
-            stepData["svgData"] = self.imageData
-            return stepData
+            return solution.exportCircuitInfo(step)
 
         else:
             return self.emptyExportDict
@@ -63,7 +62,7 @@ class DictExport(DictExportBase):
         self.imageData = solution[step].getImageData()
 
         if not self._isInitialStep():
-            self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+1 elements)
+            self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+m elements)
 
             for name in solution[step].cpts:
                 self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.prefixer,
@@ -72,6 +71,9 @@ class DictExport(DictExportBase):
                 DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.prefixer,
                                   self.voltSym))
             self._updateCompRel()
+
+        if self._isInitialStep():
+            pass
 
     def _updateCompRel(self):
         if self.solStep.relation == ComponentRelation.parallel:

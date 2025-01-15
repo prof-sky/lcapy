@@ -201,24 +201,20 @@ class Solution:
         return os.path.join(path, filename + f"_{step}.svg")
 
     def exportCircuitInfo(self, step, path: str = None, filename: str ="circuit", debug: bool = False,
-                         ) -> str:
+                         ) -> ExportDict:
         if path is None:
             path = ""
 
         self.check_path(path)
         filename = os.path.splitext(filename)[0]
 
-        jsonExport = DictExportCircuitInfo()
-        as_dict = jsonExport.getDictForStep(step, self)
+        export = DictExportCircuitInfo()
+        stepData = export.getDictForStep(step, self)
 
         if debug:
-            print(as_dict)
+            print(stepData)
 
-        fullPathName = os.path.join(path, filename) + "_" + "circuitInfo" + ".json"
-        with open(fullPathName, "w", encoding="utf-8") as f:
-            json.dump(as_dict, f, ensure_ascii=False, indent=4)
-
-        return fullPathName
+        return stepData
 
     def exportStepAsDict(self, step) -> ExportDict:
         """

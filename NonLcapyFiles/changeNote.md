@@ -1,4 +1,7 @@
 ## 1.24+inskale.0.26
+- return circuit info in step0
+
+## 1.24+inskale.0.26
 - return dict not files
 - accept n elements for simplification
 

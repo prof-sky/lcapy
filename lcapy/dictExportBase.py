@@ -118,6 +118,8 @@ class DictExportBase:
     def emptyExportDict(self) -> ExportDict:
         return ExportDict({
                 "step": None,
+                "source": None,
+                "omega_0": None,
                 "canBeSimplified": False,
                 "simplifiedTo": {
                     "Z": {"name": None, "complexVal": None, "val": None},
@@ -136,11 +138,13 @@ class DictExportBase:
             })
 
     @staticmethod
-    def exportDict(step: str, canBeSimplified: bool, simplifiedTo: dict, componentsRelation: ComponentRelation,
-                   svgData: str, cpts: list[dict]) -> ExportDict:
+    def exportDict(step: str, canBeSimplified: bool, simplifiedTo: dict,
+                   componentsRelation: ComponentRelation, svgData: str, cpts: list[dict]) -> ExportDict:
 
         return ExportDict({
             "step": step,
+            "source": None,
+            "omega_0": None,
             "canBeSimplified": canBeSimplified,  # bool
             "simplifiedTo": simplifiedTo,
             "componentsRelation": componentsRelation.to_string(),
