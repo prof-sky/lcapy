@@ -196,16 +196,16 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(label, ofst=0.2, class_='element-label ' + label), line)
+        self.addElement(sdElement.label(label, ofst=(-0.4, -0.1), class_='element-label ' + label), line)
         curLabel = elm.CurrentLabelInline(direction='in', class_="current-label arrow I" + line.typeSuffix).at(sdElement)
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="voltage-label arrow " + self.text.volt + line.typeSuffix, ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
-            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='current-label arrow ' + "I"+self.text.total))
-            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='voltage-label arrow' + self.text.volt+self.text.total))
+            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='current-label arrow ' + "I"+self.text.total, ofst=(0.1, 0)))
+            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='voltage-label arrow' + self.text.volt+self.text.total, ofst=(-0.2, 0.1)))
         elif not line.type == "W":
-            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:]))
-            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.text.volt + id_[1:]))
+            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:], ofst=(-0.1, 0)))
+            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.text.volt + id_[1:], ofst=(0.2, -0.1)))
 
     def add_connection_dots(self):
         """
