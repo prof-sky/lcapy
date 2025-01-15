@@ -1,4 +1,9 @@
-## 1.24+inskale.0.26
+## 1.24+inskale.0.28
+- step0 returns different object
+- changed label positions
+- new element class names in svg file
+
+## 1.24+inskale.0.27
 - return circuit info in step0
 
 ## 1.24+inskale.0.26

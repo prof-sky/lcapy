@@ -118,8 +118,6 @@ class DictExportBase:
     def emptyExportDict(self) -> ExportDict:
         return ExportDict({
                 "step": None,
-                "source": None,
-                "omega_0": None,
                 "canBeSimplified": False,
                 "simplifiedTo": {
                     "Z": {"name": None, "complexVal": None, "val": None},
@@ -128,12 +126,7 @@ class DictExportBase:
                     "hasConversion": None,
                 },
                 "componentsRelation": ComponentRelation.none.to_string(),
-                "components": [{
-                    "Z": {"name": None, "complexVal": None, "val": None},
-                    "U": {"name": None, "val": None},
-                    "I": {"name": None, "val": None},
-                    "hasConversion": None,
-                }],
+                "components": [],
                 "svgData": None
             })
 
@@ -143,8 +136,6 @@ class DictExportBase:
 
         return ExportDict({
             "step": step,
-            "source": None,
-            "omega_0": None,
             "canBeSimplified": canBeSimplified,  # bool
             "simplifiedTo": simplifiedTo,
             "componentsRelation": componentsRelation.to_string(),
@@ -160,4 +151,42 @@ class DictExportBase:
             "I": {"name": iName, "val": iVal},
             "hasConversion": hasConversion
         })
+
+    def step0ExportDictSource(self, sourceType: str, omega_0, val):
+        return ExportDict({
+            "Type": sourceType, # V,I
+            "omega_0": self.latexWithPrefix(omega_0),
+            "val": self.latexWithPrefix(val)
+        })
+
+    @staticmethod
+    def step0ExportDict(step, sources: list[dict], cpts: list, circuitType: str, svgData: str):
+        sourcesList = []
+        for source in sources:
+            sourcesList.append(source)
+
+        cptsList = []
+        for cpt in cpts:
+            cptsList.append(cpt)
+
+        return ExportDict({
+            "step": step,
+            "source": sourcesList,
+            "components": cptsList,
+            "componentTypes": circuitType,
+            "svgData": svgData
+        })
+    # compTypes.add(compType)
+
+    # if len(compTypes) == 1:
+    #    if "R" in compTypes:
+    #        as_dict["componentTypes"] = "R"
+    #    elif "L" in compTypes:
+    #        as_dict["componentTypes"] = "L"
+    #    elif "C" in compTypes:
+    #        as_dict["componentTypes"] = "C"
+    #    else:
+    #        raise ValueError("Unexpected type in set types")
+    #else:
+    #    as_dict["componentTypes"] = "RLC"
 

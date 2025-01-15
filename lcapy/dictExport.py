@@ -1,5 +1,3 @@
-import pyodide
-
 import lcapy
 from lcapy.componentRelation import ComponentRelation
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit

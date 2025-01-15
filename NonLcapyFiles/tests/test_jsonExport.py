@@ -27,6 +27,10 @@ class TestJsonExport:
 
     def helperJsonExportCircuitInfo(self, fileName: str):
         sol = solve.SolveInUserOrder(fileName, filePath="Schematics", savePath="/tempTest")
+        data = sol.createInitialStep()
+        for key in ["step", "source", "components", "componentTypes", "svgData"]:
+            assert key in data.keys(), f"filename: {fileName} dataKey {key} is missing"
+
         sol.createInitialStep()
 
     def test_JasonExportCircuitInfo(self):
@@ -50,7 +54,8 @@ class TestJsonExport:
         cct.namer.reset()
         steps = cct.simplify_stepwise()
         sol = Solution(steps)
-        for step in sol.available_steps:
+
+        for step in sol.available_steps[1::]:
             jsonFileName = sol.exportStepAsJson(step, path=savePath, filename=fileName)
             data = self.readJson(jsonFileName)
             for key in ["step", "canBeSimplified", "simplifiedTo", "componentsRelation",
