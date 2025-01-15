@@ -169,7 +169,8 @@ class DrawWithSchemdraw:
         else:
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
-            label = line.label
+            id_ = line.label
+            label = id_
 
         if line.type == "R" or line.type == "Z":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
@@ -195,20 +196,20 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(label, ofst=0.2, class_='EL ' + label), line)
-        curLabel = elm.CurrentLabelInline(direction='in', class_="arrow " + label).at(sdElement)
-        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="arrow " + label, ofst=0.15).at(sdElement)
+        self.addElement(sdElement.label(label, ofst=0.2, class_='element-label ' + label), line)
+        curLabel = elm.CurrentLabelInline(direction='in', class_="current-label arrow I" + line.typeSuffix).at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="voltage-label arrow " + self.text.volt + line.typeSuffix, ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
-            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='arrow ' + "I"+self.text.total))
-            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='arrow ' + self.text.volt+self.text.total))
+            self.cirDraw.add(curLabel.label("I$_{"+self.text.total+'}$', class_='current-label arrow ' + "I"+self.text.total))
+            self.cirDraw.add(volLabel.reverse().label(self.text.volt+'$_{'+self.text.total+'}$', loc='bottom', class_='voltage-label arrow' + self.text.volt+self.text.total))
         elif not line.type == "W":
-            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='arrow ' + "I" + id_[1:]))
-            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='arrow ' + self.text.volt + id_[1:]))
+            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:]))
+            self.cirDraw.add(volLabel.label(self.text.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.text.volt + id_[1:]))
 
     def add_connection_dots(self):
         """
-        adds the dots that are on connections between two lines e.g when a line splits up in two lines a dot is created
+        adds the dots that are on connections between two lines e.g. when a line splits up in two lines a dot is created
         at the split point
         :return: does not return anything
         """
