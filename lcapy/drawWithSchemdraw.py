@@ -202,7 +202,7 @@ class DrawWithSchemdraw:
 
         if line.type == "V" or line.type == "I":
             self.cirDraw.add(curLabel.label("I$_{"+self.ls.total+'}$', class_='current-label arrow ' + "I"+self.ls.total, ofst=(0.1, 0)))
-            self.cirDraw.add(volLabel.reverse().label(self.ls.volt+'$_{'+self.ls.total+'}$', loc='bottom', class_='voltage-label arrow' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
+            self.cirDraw.add(volLabel.reverse().label(self.ls.volt+'$_{'+self.ls.total+'}$', loc='bottom', class_='voltage-label arrow ' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
         elif not line.type == "W":
             self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:], ofst=(-0.1, 0)))
             self.cirDraw.add(volLabel.label(self.ls.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.ls.volt + id_[1:], ofst=(0.2, -0.1)))
