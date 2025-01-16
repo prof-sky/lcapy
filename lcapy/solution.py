@@ -21,7 +21,7 @@ from lcapy.dictExportBase import ExportDict
 
 
 class Solution:
-    def __init__(self, steps: list[SolutionStep], langSymbols: LangSymbols = LangSymbols()):
+    def __init__(self, steps: list[SolutionStep], langSymbols: LangSymbols):
         """
         This class simplifies the Solution and handles the access to all data that is necessary to create a step-by-step
         solution to a circuit. The input is of this class is the output of simplify_Stepwise
@@ -208,7 +208,7 @@ class Solution:
         self.check_path(path)
         filename = os.path.splitext(filename)[0]
 
-        export = DictExportCircuitInfo()
+        export = DictExportCircuitInfo(self.langSymbols)
         stepData = export.getDictForStep(step, self)
 
         if debug:
@@ -248,7 +248,7 @@ class Solution:
         :param step: the step that is exported as the jason
         :return:
         """
-        return DictExport(voltSym=self.langSymbols.volt).getDictForStep(step, self)
+        return DictExport(langSymbol=self.langSymbols).getDictForStep(step, self)
 
     def exportStepAsJson(self, step: str, path: str = None, filename: str ="circuit", debug: bool = False,
                          ) -> str:

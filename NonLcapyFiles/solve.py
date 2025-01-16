@@ -37,8 +37,7 @@ class SolveInUserOrder:
         self.langSymbols = langSym
         self.circuit = Circuit(FileToImpedance(os.path.join(filePath, filename)))
         self.steps: list[SolutionStep] = [
-            SolutionStep(self.circuit, [], None, None, None, None,
-                         None)
+            SolutionStep(self.circuit, [], None, None, None, None)
         ]
         self.circuit.namer.reset()
 
@@ -71,12 +70,12 @@ class SolveInUserOrder:
             newNet, newCptName = self.circuit.simplify_N_cpts(self.circuit, cpts)
             self.steps.append(SolutionStep(newNet, cpts=cpts, newCptName=newCptName,
                                            relation=ComponentRelation.series.value,
-                                           solutionText=None, lastStep=None, nextStep=None))
+                                           lastStep=None, nextStep=None))
         elif all(cpt in self.circuit.in_parallel(cpts[0]) for cpt in cpts[1::]):
             newNet, newCptName = self.circuit.simplify_N_cpts(self.circuit, cpts)
             self.steps.append(SolutionStep(newNet, cpts=cpts, newCptName=newCptName,
                                            relation=ComponentRelation.parallel.value,
-                                           solutionText=None, lastStep=None, nextStep=None))
+                                           lastStep=None, nextStep=None))
         else:
             return DictExportBase.emptyExportDict
 

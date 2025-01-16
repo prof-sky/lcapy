@@ -19,10 +19,10 @@ class SolutionStep:
         self.lastStep: Union[Circuit, None] = lastStep
         self.nextStep: Union[Circuit, None] = nextStep
 
-    def draw(self):
+    def draw(self, langSymbols):
         from lcapy.drawWithSchemdraw import DrawWithSchemdraw
-        DrawWithSchemdraw(self.circuit).draw()
+        DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).draw()
 
-    def getImageData(self) -> str:
+    def getImageData(self, langSymbols) -> str:
         from lcapy.drawWithSchemdraw import DrawWithSchemdraw
-        return DrawWithSchemdraw(self.circuit).getImageData()
+        return DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()

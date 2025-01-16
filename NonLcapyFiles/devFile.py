@@ -36,7 +36,7 @@ if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
 
 st = time.time()
 # solve.solve_circuit(filename, filePath="StandardCircuits")
-a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions")
+a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions", langSymbols={"volt": "V", "total": "tot"})
 ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()

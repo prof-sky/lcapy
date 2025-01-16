@@ -5,7 +5,7 @@ from lcapy.solutionStep import SolutionStep
 from lcapy.dictExportBase import DictExportBase
 from lcapy.DictExportElement import DictExportElement
 from lcapy.dictExportBase import ExportDict
-
+from lcapy.langSymbols import LangSymbols
 
 class DictExport(DictExportBase):
     """
@@ -18,8 +18,8 @@ class DictExport(DictExportBase):
     in the user based mode not all information can be known when those files are generated
     """
 
-    def __init__(self, precision=3, voltSym='U'):
-        super().__init__(precision, voltSym=voltSym)
+    def __init__(self, langSymbol: LangSymbols(), precision=3):
+        super().__init__(precision, langSymbol)
         # this class automatically prefixes every field that includes val or Val in the name and transforms it to
         # a latex string before exporting the dictionary
         self.circuit: 'lcapy.Circuit' = None
@@ -57,17 +57,17 @@ class DictExport(DictExportBase):
         self.solStep: 'lcapy.solutionStep' = solution[step]
         self.simpCircuit: 'lcapy.Circuit' = solution[step].circuit  # circuit with less elements (n elements)
         self.omega_0 = getOmegaFromCircuit(self.simpCircuit, getSourcesFromCircuit(self.simpCircuit))
-        self.imageData = solution[step].getImageData()
+        self.imageData = solution[step].getImageData(langSymbols=self.ls)
 
         if not self._isInitialStep():
             self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+m elements)
 
             for name in solution[step].cpts:
                 self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.prefixer,
-                                                         self.voltSym))
+                                                         self.ls))
             self.vcElements.append(
                 DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.prefixer,
-                                  self.voltSym))
+                                  self.ls))
             self._updateCompRel()
 
         if self._isInitialStep():

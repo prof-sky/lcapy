@@ -8,6 +8,7 @@ from lcapy.unitPrefixer import SIUnitPrefixer
 from lcapy.componentRelation import ComponentRelation
 import os
 from json import dump as jdump
+from lcapy.langSymbols import LangSymbols
 
 
 class ExportDict(dict):
@@ -55,10 +56,10 @@ class ExportDict(dict):
 
 
 class DictExportBase:
-    def __init__(self, precision: int, voltSym='U'):
+    def __init__(self, precision: int, langSymbol: LangSymbols):
         self.precision = precision
         self.prefixer = SIUnitPrefixer()
-        self.voltSym = voltSym
+        self.ls = langSymbol
 
     def _latexRealNumber(self, value: Union[Mul, Expr], prec=None, addPrefix: bool = True) -> str:
         if prec is None:

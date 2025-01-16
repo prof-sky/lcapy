@@ -5,11 +5,12 @@ from lcapy import omega0
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy.dictExport import ExportDict
+from lcapy.langSymbols import LangSymbols
 
 
 class DictExportCircuitInfo(DictExportBase):
-    def __init__(self, precision=3):
-        super().__init__(precision)
+    def __init__(self, langSymbols: LangSymbols(), precision=3):
+        super().__init__(precision, langSymbols)
         self.omega_0 = None
 
     def getDictForStep(self, step, solution: 'lcapy.Solution') -> ExportDict:
@@ -66,4 +67,4 @@ class DictExportCircuitInfo(DictExportBase):
             else:
                 raise ValueError("Unexpected type in set types")
 
-        return self.step0ExportDict(step, sources, cpts, compType, solution[step].getImageData())
+        return self.step0ExportDict(step, sources, cpts, compType, solution[step].getImageData(self.ls))

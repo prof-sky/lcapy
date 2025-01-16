@@ -7,15 +7,17 @@ from lcapy.dictExportBase import DictExportBase
 
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
-                 omega_0, compName: str, prefixer: 'lcapy.unitPrefixer.SiUnitPrefixer', voltSym="U", precision=3):
-        super().__init__(precision=precision, voltSym=voltSym)
+                 omega_0, compName: str, prefixer: 'lcapy.unitPrefixer.SiUnitPrefixer',
+                 langSymbols: 'lcapy.langSymbols.LangSymbols', precision=3):
+        super().__init__(precision=precision, langSymbol=langSymbols)
         self.circuit = circuit
         self.solStep = solStep
         self.omega_0 = omega_0
         self.prefixer = prefixer
 
         self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
-        self.uName = self.voltSym + self.suffix
+
+        self.uName = self.ls.volt + self.suffix
         self.iName = 'I' + self.suffix
         self._cpxValue, self._value, self.compType = self._convertValue(self.circuit[compName].Z)
         self._i = self.circuit[compName].I(t)
