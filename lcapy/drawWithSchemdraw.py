@@ -196,13 +196,17 @@ class DrawWithSchemdraw:
         else:
             raise RuntimeError(f"unknown element type {line.type}")
 
-        self.addElement(sdElement.label(label, ofst=(-0.4, -0.1), class_='element-label ' + label), line)
+        if line.drawParam == "left" or line.drawParam == "right":
+            self.addElement(sdElement.label(label, ofst=0.2, class_='element-label ' + label), line)
+        else:
+            self.addElement(sdElement.label(label, ofst=(-0.4, -0.1), class_='element-label ' + label), line)
+
         curLabel = elm.CurrentLabelInline(direction='in', class_="current-label arrow I" + line.typeSuffix).at(sdElement)
-        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], class_="voltage-label arrow " + self.ls.volt + line.typeSuffix, ofst=0.15).at(sdElement)
+        volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], length=1.5, class_="voltage-label arrow " + self.ls.volt + line.typeSuffix, ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
             self.cirDraw.add(curLabel.label("I$_{"+self.ls.total+'}$', class_='current-label arrow ' + "I"+self.ls.total, ofst=(0.1, 0)))
-            self.cirDraw.add(volLabel.reverse().label(self.ls.volt+'$_{'+self.ls.total+'}$', loc='bottom', class_='voltage-label arrow ' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
+            self.cirDraw.add(volLabel.reverse().label(self.ls.volt+'$_{'+self.ls.total+'}$', class_='voltage-label arrow ' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
         elif not line.type == "W":
             self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:], ofst=(-0.1, 0)))
             self.cirDraw.add(volLabel.label(self.ls.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.ls.volt + id_[1:], ofst=(0.2, -0.1)))
