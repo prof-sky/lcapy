@@ -29,7 +29,7 @@ class TestJsonExport:
     def helperJsonExportCircuitInfo(self, fileName: str):
         sol = solve.SolveInUserOrder(fileName, filePath="Schematics", savePath="/tempTest")
         data = sol.createInitialStep()
-        for key in ["step", "source", "components", "componentTypes", "svgData"]:
+        for key in ["step", "source", "allComponents", "componentTypes", "svgData"]:
             assert key in data.keys(), f"filename: {fileName} dataKey {key} is missing"
 
         sol.createInitialStep()

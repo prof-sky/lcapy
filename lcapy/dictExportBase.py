@@ -167,33 +167,20 @@ class DictExportBase:
             "hasConversion": hasConversion
         })
 
-    def step0ExportDictSource(self, sourceType: str, omega_0, val):
+    def step0ExportDictSource(self, sourceType: str, omega_0, val: ExportDict):
         return ExportDict({
             "Type": sourceType,  # V,I
             "omega_0": self.latexWithPrefix(omega_0),
-            "val": self.latexWithPrefix(val)
+            "sources": val
         })
 
     @staticmethod
-    def step0ExportDict(step, sources: list[ExportDict], cpts: list[ExportDict], circuitType: str, svgData: str):
+    def step0ExportDict(step, source: ExportDict, allCpts: list[ExportDict],
+                        circuitType: str, svgData: str):
         return ExportDict({
             "step": step,
-            "source": sources,
-            "components": cpts,
+            "source": source,
+            "allComponents": allCpts,
             "componentTypes": circuitType,
             "svgData": svgData
         })
-    # compTypes.add(compType)
-
-    # if len(compTypes) == 1:
-    #    if "R" in compTypes:
-    #        as_dict["componentTypes"] = "R"
-    #    elif "L" in compTypes:
-    #        as_dict["componentTypes"] = "L"
-    #    elif "C" in compTypes:
-    #        as_dict["componentTypes"] = "C"
-    #    else:
-    #        raise ValueError("Unexpected type in set types")
-    #else:
-    #    as_dict["componentTypes"] = "RLC"
-
