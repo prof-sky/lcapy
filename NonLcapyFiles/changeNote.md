@@ -1,3 +1,6 @@
+## 1.24+inskale.0.30
+- wrong convertion for values in step0 in ac circuits fixed
+
 ## 1.24+inskale.0.29
 - label for horizontal elements adjusted
 - corrected error in uges element name in svg

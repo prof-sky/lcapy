@@ -51,11 +51,12 @@ class DictExportCircuitInfo(DictExportBase):
                 sources.append(self.step0ExportDictSource(sourceType, cirOmega_0, sourceVal))
 
             elif not cpt.type == "W":
-                value, compType = ValueToComponent(cpt.Z)
+                value, compType = ValueToComponent(cpt.Z, self.omega_0)
                 compTypes.add(compType)
                 val = self.latexWithPrefix(uwa.addUnit(value, compType))
-                cpts.append(self.exportDictCpt(compType + cpt.id, None, None,
-                                                            None, val, None, None, False))
+                cpts.append(
+                    self.exportDictCpt(compType + cpt.id, None, None,None,
+                                       val, None, None, False))
 
         if len(compTypes) == 1:
             if "R" in compTypes:
