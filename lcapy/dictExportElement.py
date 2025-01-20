@@ -7,13 +7,11 @@ from lcapy.dictExportBase import DictExportBase
 
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
-                 omega_0, compName: str, prefixer: 'lcapy.unitPrefixer.SiUnitPrefixer',
-                 langSymbols: 'lcapy.langSymbols.LangSymbols', precision=3):
+                 omega_0, compName: str, langSymbols: 'lcapy.langSymbols.LangSymbols', precision=3):
         super().__init__(precision=precision, langSymbol=langSymbols)
         self.circuit = circuit
         self.solStep = solStep
         self.omega_0 = omega_0
-        self.prefixer = prefixer
 
         self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
 

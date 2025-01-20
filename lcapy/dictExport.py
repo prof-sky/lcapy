@@ -3,7 +3,7 @@ from lcapy.componentRelation import ComponentRelation
 from lcapy.impedanceConverter import getSourcesFromCircuit, getOmegaFromCircuit
 from lcapy.solutionStep import SolutionStep
 from lcapy.dictExportBase import DictExportBase
-from lcapy.DictExportElement import DictExportElement
+from lcapy.dictExportElement import DictExportElement
 from lcapy.dictExportBase import ExportDict
 from lcapy.langSymbols import LangSymbols
 
@@ -63,11 +63,9 @@ class DictExport(DictExportBase):
             self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+m elements)
 
             for name in solution[step].cpts:
-                self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.prefixer,
-                                                         self.ls))
+                self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.ls))
             self.vcElements.append(
-                DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.prefixer,
-                                  self.ls))
+                DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.ls))
             self._updateCompRel()
 
         if self._isInitialStep():

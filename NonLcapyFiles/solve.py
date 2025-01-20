@@ -83,7 +83,7 @@ class SolveInUserOrder:
         newestStep = sol.available_steps[-1]
 
         stepData = sol.exportStepAsDict(newestStep)
-        
+
         self.circuit = newNet
 
         return stepData

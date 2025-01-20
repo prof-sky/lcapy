@@ -29,7 +29,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[14]
+filename = filenames[12]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -40,9 +40,9 @@ a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solu
 ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()
-a.simplifyNCpts(["Z1", "Z2", "Z3"]).toFiles()
-#a.simplifyNCpts(["Z4", "Z5"]).toFiles()
-#a.simplifyNCpts(["Zs1", "Zs2"]).toFiles()
+a.simplifyNCpts(["Z2", "Z4"]).toFiles()
+a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
+a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

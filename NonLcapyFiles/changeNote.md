@@ -1,3 +1,8 @@
+## 1.24+inskale.0.29
+- label for horizontal elements adjusted
+- corrected error in uges element name in svg
+- change voltage abbreviation with language
+
 ## 1.24+inskale.0.28
 - step0 returns different object
 - changed label positions
