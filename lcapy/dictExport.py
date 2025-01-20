@@ -28,6 +28,7 @@ class DictExport(DictExportBase):
         self.imageData = None
 
         self.vcElements: list[DictExportElement] = []
+        self.allVcElements: list[DictExportElement] = []
         self.relation: ComponentRelation = ComponentRelation.none
         self.valueFieldKeys = self._getValueFieldKeys("val")
 
@@ -41,8 +42,12 @@ class DictExport(DictExportBase):
             for elm in self.vcElements[:-1]:
                 cpts.append(elm.toDict())
 
+            allCpts = []
+            for elm in self.allVcElements:
+                allCpts.append(elm.toDict())
+
             stepData = self.exportDict(
-                step, True, resElem.toDict(), self.relation, self.imageData, cpts
+                step, True, resElem.toDict(), self.relation, self.imageData, cpts, allCpts
             )
 
             return stepData
@@ -67,6 +72,9 @@ class DictExport(DictExportBase):
             self.vcElements.append(
                 DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.ls))
             self._updateCompRel()
+
+            for name in solution[step].circuit.reactances:
+                self.allVcElements.append(DictExportElement(self.solStep, solution[step].circuit, self.omega_0, name, self.ls))
 
         if self._isInitialStep():
             pass

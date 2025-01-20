@@ -5,6 +5,7 @@ import NonLcapyFiles.solve as solve
 import json
 from lcapy import Circuit, FileToImpedance
 from lcapy.solution import Solution
+from lcapy.langSymbols import LangSymbols
 
 
 class TestJsonExport:
@@ -53,7 +54,7 @@ class TestJsonExport:
         cct = Circuit(FileToImpedance(os.path.join(filePath, fileName)))
         cct.namer.reset()
         steps = cct.simplify_stepwise()
-        sol = Solution(steps)
+        sol = Solution(steps, LangSymbols())
 
         for step in sol.available_steps[1::]:
             jsonFileName = sol.exportStepAsJson(step, path=savePath, filename=fileName)

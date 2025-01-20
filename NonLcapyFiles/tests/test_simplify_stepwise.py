@@ -8,6 +8,7 @@ from lcapy.impedanceConverter import ValueToComponent, FileToImpedance, getSourc
 from os.path import join
 from lcapy.componentnamer import ComponentNamer
 from typing import Union
+from lcapy.langSymbols import LangSymbols
 
 
 class TestSimplifyStepwise:
@@ -23,7 +24,7 @@ class TestSimplifyStepwise:
         orgVal2 = Solution.getElementSpecificValue(orgCct[compType + '2'])
 
         cct = Circuit(FileToImpedance(join(path, filename)))
-        sol = Solution(cct.simplify_stepwise())
+        sol = Solution(cct.simplify_stepwise(), LangSymbols())
 
         val1 = sol['step1'].lastStep.circuit.Z1.Z
         val2 = sol['step1'].lastStep.circuit.Z2.Z
@@ -55,7 +56,7 @@ class TestSimplifyStepwise:
                         path: str = "./Schematics"):
         ComponentNamer().reset()
         cct = Circuit(FileToImpedance(join(path, filename)))
-        sol = Solution(cct.simplify_stepwise())
+        sol = Solution(cct.simplify_stepwise(), LangSymbols())
 
         val1 = sol['step1'].lastStep.circuit.Z1.Z
         val2 = sol['step1'].lastStep.circuit.Z2.Z

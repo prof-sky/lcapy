@@ -128,24 +128,38 @@ class DictExportBase:
                 },
                 "componentsRelation": ComponentRelation.none.to_string(),
                 "components": [],
+                "allComponents": [],
                 "svgData": None
             })
 
     @staticmethod
     def exportDict(step: str, canBeSimplified: bool, simplifiedTo: dict,
-                   componentsRelation: ComponentRelation, svgData: str, cpts: list[dict]) -> ExportDict:
-
+                   componentsRelation: ComponentRelation, svgData: str,
+                   cpts: list[ExportDict], allCpts: list[ExportDict]) -> ExportDict:
+        """
+        :param step: step of simplification step1 step2 step3...
+        :param canBeSimplified: True, False if the selected cpts can be simplified
+        :param simplifiedTo: components which results from simplifying cpts a,b,c...
+        :param componentsRelation: if the cpts where in series or in parallel
+        :param svgData: svg data string of the circuit
+        :param cpts: the components which where simplified to simplifiedTo
+        :param allCpts: all cpts in the circuit (excepts sources)
+        :return: Dictionary with the information
+        cpts and allCpts dicts are self.exportDictCpt
+        """
         return ExportDict({
             "step": step,
             "canBeSimplified": canBeSimplified,  # bool
             "simplifiedTo": simplifiedTo,
             "componentsRelation": componentsRelation.to_string(),
             "components": cpts,
+            "allComponents": allCpts,
             "svgData": svgData
         })
 
     @staticmethod
-    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal, hasConversion: bool) -> ExportDict:
+    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal,
+                      hasConversion: bool) -> ExportDict:
         return ExportDict({
             "Z": {"name": rName, "complexVal": zComplexVal, "val": zVal},
             "U": {"name": uName, "val": uVal},
@@ -155,7 +169,7 @@ class DictExportBase:
 
     def step0ExportDictSource(self, sourceType: str, omega_0, val):
         return ExportDict({
-            "Type": sourceType, # V,I
+            "Type": sourceType,  # V,I
             "omega_0": self.latexWithPrefix(omega_0),
             "val": self.latexWithPrefix(val)
         })

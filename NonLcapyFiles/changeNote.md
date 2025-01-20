@@ -2,6 +2,7 @@
 - label for horizontal elements adjusted
 - corrected error in uges element name in svg
 - change voltage abbreviation with language
+- add all components to return dict
 
 ## 1.24+inskale.0.28
 - step0 returns different object

@@ -4,6 +4,7 @@ from lcapy.solution import Solution
 from lcapy.impedanceConverter import ValueToComponent, FileToImpedance
 from os.path import join
 from lcapy.componentnamer import ComponentNamer
+from lcapy.langSymbols import LangSymbols
 
 
 class TestImpedanceConverter:
@@ -23,14 +24,14 @@ class TestImpedanceConverter:
     def assertType(filename: str, compType: str, path: str = "./Schematics"):
         ComponentNamer().reset()
         cct = Circuit(FileToImpedance(join(path, filename)))
-        sol = Solution(cct.simplify_stepwise())
+        sol = Solution(cct.simplify_stepwise(), LangSymbols())
         assert TestImpedanceConverter.getCompTypeSolStep1(sol) == compType
 
     @staticmethod
     def assert2Types(filename: str, compType1: str, compType2: str, path: str = "./Schematics"):
         ComponentNamer().reset()
         cct = Circuit(FileToImpedance(join(path, filename)))
-        sol = Solution(cct.simplify_stepwise())
+        sol = Solution(cct.simplify_stepwise(), LangSymbols())
         gotType = TestImpedanceConverter.getCompTypeSolStep1(sol)
         assert gotType == compType1 or gotType == compType2
 

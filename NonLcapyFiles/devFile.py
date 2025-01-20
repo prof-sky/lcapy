@@ -21,7 +21,8 @@ filenames = ["Circuit_inductors.txt",  # 0
              "00_vlCircuit.txt",  # 11
              "Resistor_Hetznecker.txt",  # 12
              "C_parallel_dc",  # 13
-             "03_resistor_parallel3.txt"  # 14
+             "03_resistor_parallel3.txt",  # 14
+             "00_mixed_RC_series.txt"  # 15
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -29,7 +30,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[12]
+filename = filenames[15]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -40,9 +41,9 @@ a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solu
 ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()
-a.simplifyNCpts(["Z2", "Z4"]).toFiles()
-a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
-a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
+a.simplifyNCpts(["Z1", "Z2"]).toFiles()
+#a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
+#a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")
