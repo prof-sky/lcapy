@@ -41,7 +41,7 @@ def ComponentToImpedance(netlistLine: str,
     if isinstance(omega_0, float):
         _omega_0 = omega_0
     elif isinstance(omega_0, str):
-        _omega_0 = sp.Symbol(omega_0, real=True)
+        _omega_0 = sp.parse_expr(omega_0, local_dict={"pi": sp.pi})
     else:
         _omega_0 = lcapy_omega0
 
@@ -52,7 +52,8 @@ def ComponentToImpedance(netlistLine: str,
 
         expr = replaceValueWith[netLine.type]
         parsedVal = sp.parse_expr(netLine.value)
-        netLine.value = '{'+str(sp.parse_expr(expr, {"value": parsedVal, "omega_0": _omega_0, "j": j}))+'}'
+        parsedEx = sp.parse_expr(expr, {"value": parsedVal, "omega_0": _omega_0, "j": j})
+        netLine.value = '{'+str(parsedEx)+'}'
 
         netLine.type = replaceElementType[netLine.type]
         returnVal = netLine.reconstruct()

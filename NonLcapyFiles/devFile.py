@@ -42,8 +42,8 @@ ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()
 a.simplifyNCpts(["Z1", "Z2"]).toFiles()
-#a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
-#a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
+# a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
+# a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

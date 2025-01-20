@@ -1,0 +1,7 @@
+V1 1 0 ac {10} {0} {60*pi}; up
+W 1 2; up
+W 2 3; right
+R1 3 4 {100}; down
+C2 4 5 {1}; down
+W 5 6; left
+W 6 0; up

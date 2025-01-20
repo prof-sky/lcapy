@@ -1,5 +1,6 @@
 ## 1.24+inskale.0.30
 - wrong convertion for values in step0 in ac circuits fixed
+- fixed wrong convertion value for F < 1 in ac circuits
 
 ## 1.24+inskale.0.29
 - label for horizontal elements adjusted
