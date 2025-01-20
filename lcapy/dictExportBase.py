@@ -161,19 +161,11 @@ class DictExportBase:
         })
 
     @staticmethod
-    def step0ExportDict(step, sources: list[dict], cpts: list, circuitType: str, svgData: str):
-        sourcesList = []
-        for source in sources:
-            sourcesList.append(source)
-
-        cptsList = []
-        for cpt in cpts:
-            cptsList.append(cpt)
-
+    def step0ExportDict(step, sources: list[ExportDict], cpts: list[ExportDict], circuitType: str, svgData: str):
         return ExportDict({
             "step": step,
-            "source": sourcesList,
-            "components": cptsList,
+            "source": sources,
+            "components": cpts,
             "componentTypes": circuitType,
             "svgData": svgData
         })
