@@ -7,22 +7,23 @@ from lcapy.validateCircuitFile import ValidateCircuitFile
 from lcapy.dictExportBase import ExportDict
 
 
-filenames = ["Circuit_inductors.txt",  # 0
-             "Circuit_resistors.txt",  # 1
-             "Circuit_capacitors.txt",  # 2
-             "Circuit_mixed_2pi30.txt",  # 3
-             "Circuit_mixed_omega0.txt",  # 4
-             "Circuit_mixed_30.txt",  # 5
-             "Circuit_mixed.txt",  # 6
-             "Circuit_resistor_task1.txt",  # 7
-             "Circuit_resistor_task2.txt",  # 8
-             "Circuit_resistors_I",  # 9
-             "Circuit_resistors_I_ac",  # 10
-             "00_vlCircuit.txt",  # 11
+filenames = ["Inductors.txt",  # 0
+             "Resistors.txt",  # 1
+             "Capacitors.txt",  # 2
+             "Mixed_2pi30.txt",  # 3
+             "Mixed_omega0.txt",  # 4
+             "Mixed_30.txt",  # 5
+             "Mixed.txt",  # 6
+             "Resistor_task1.txt",  # 7
+             "Resistor_task2.txt",  # 8
+             "Resistors_I",  # 9
+             "Resistors_I_ac",  # 10
+             "VlCircuit.txt",  # 11
              "Resistor_Hetznecker.txt",  # 12
              "C_parallel_dc",  # 13
-             "03_resistor_parallel3.txt",  # 14
-             "00_mixed_RC_series.txt"  # 15
+             "Parallel3.txt",  # 14
+             "Mixed_RC_series.txt",  # 15
+             "Resistors_row3.txt"  # 16
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -30,7 +31,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[12]
+filename = filenames[16]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -41,9 +42,9 @@ a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solu
 ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()
-a.simplifyNCpts(["Z2", "Z4"]).toFiles()
-a.simplifyNCpts(["Z3", "Zs1"]).toFiles()
-a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
+a.simplifyNCpts(["Z1", "Z2", "Z3"]).toFiles()
+# a.simplifyNCpts(["Zs1", "Z3"]).toFiles()
+# a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

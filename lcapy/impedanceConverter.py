@@ -123,8 +123,11 @@ def ValueToComponent(value, omega_0: Union[float, str] = None) -> (sp.Mul, str):
 
     freeSymbols = _value.free_symbols - {_omega_0, 'pi'}
 
-    if len(freeSymbols) > 1:
-        raise AttributeError(f"Too many free symbols in {_value}, free symbols: {freeSymbols}")
+    # this code broke when the calculation is done symbolically e.g. with R1 as value for resistor R1
+    # I think that was an unnecessary check based on the fact hat without symbolic calculations there never could be
+    # more than one free symbol but is not necessary for this function to work correctly
+    # if len(freeSymbols) > 1:
+    #    raise AttributeError(f"Too many free symbols in {_value}, free symbols: {freeSymbols}")
 
     sub_dict = {}
     for freeSymbol in freeSymbols:
