@@ -1,3 +1,7 @@
+## 1.24+inskale.0.31
+- enable symbolic values for dc resistor circuits
+- 
+
 ## 1.24+inskale.0.30
 - wrong convertion for values in step0 in ac circuits fixed
 - fixed wrong convertion value for F < 1 in ac circuits
