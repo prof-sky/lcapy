@@ -17,7 +17,6 @@ class DictExportCircuitInfo(DictExportBase):
 
     def getDictForStep(self, step, solution: 'lcapy.Solution') -> ExportDict:
         compTypes = set()
-        cpts = []
 
         cirType = "RLC"
 
@@ -25,37 +24,30 @@ class DictExportCircuitInfo(DictExportBase):
         if not len(sources) == 1:
             raise AssertionError(f"Number of sources has to be one, sources: {sources}")
 
-        cpt = solution[step].circuit[sources[0]]
+        source = solution[step].circuit[sources[0]]
 
-        if cpt.type == "V":
-            sourceType = cpt.type
-            sourceVal = cpt.v.expr_with_units
-        else:
-            sourceType = cpt.type
-            sourceVal = cpt.i.expr_with_units
-
-        if cpt.has_ac:
-            if cpt.args[2] is not None:
-                cirOmega_0 = parse_expr(str(cpt.args[2]), local_dict={"pi": pi}) * Hz
+        if source.has_ac:
+            if source.args[2] is not None:
+                cirOmega_0 = parse_expr(str(source.args[2]), local_dict={"pi": pi}) * Hz
                 try:
-                    self.omega_0 = float(cpt.args[2])
+                    self.omega_0 = float(source.args[2])
                 except ValueError:
-                    self.omega_0 = str(cpt.args[2])
+                    self.omega_0 = str(source.args[2])
             else:
                 cirOmega_0 = omega0
                 self.omega_0 = "omega_0"
-        elif cpt.has_dc:
+        elif source.has_dc:
             cirOmega_0 = Mul(0) * Hz
         else:
             raise AssertionError("Voltage Source is not ac or dc")
 
-        source = self.step0ExportDictSource(sourceType, cirOmega_0,
+        source = self.step0ExportDictSource(source.type, cirOmega_0,
                                             self.exportDictCpt(
-                                                cpt.name, self.ls.volt + self.ls.total,
+                                                source.name, self.ls.volt + self.ls.total,
                                                 "I"+self.ls.total,
                                                 None, None,
-                                                self.latexWithPrefix(cpt.V(t)),
-                                                self.latexWithPrefix(cpt.I(t)),
+                                                self.latexWithPrefix(source.V(t)),
+                                                self.latexWithPrefix(source.I(t)),
                                                 False
                                             ))
 

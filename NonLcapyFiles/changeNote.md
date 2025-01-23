@@ -1,6 +1,6 @@
 ## 1.24+inskale.0.31
-- enable symbolic values for dc resistor circuits
-- 
+- enable calculation with symbolic values for dc resistor circuits
+- remove sin cos from homogenous circuits
 
 ## 1.24+inskale.0.30
 - wrong convertion for values in step0 in ac circuits fixed

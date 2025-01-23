@@ -1,3 +1,5 @@
+import sympy
+
 from lcapy.netlistLine import NetlistLine
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
@@ -7,11 +9,13 @@ from lcapy.dictExportBase import DictExportBase
 
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
-                 omega_0, compName: str, langSymbols: 'lcapy.langSymbols.LangSymbols', precision=3):
+                 omega_0, compName: str, langSymbols: 'lcapy.langSymbols.LangSymbols',
+                 inHomogeneousCircuit=False, precision=3):
         super().__init__(precision=precision, langSymbol=langSymbols)
         self.circuit = circuit
         self.solStep = solStep
         self.omega_0 = omega_0
+        self.inHomogeneousCircuit = inHomogeneousCircuit
 
         self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
 
@@ -22,7 +26,31 @@ class DictExportElement(DictExportBase):
         self._u = self.circuit[compName].V(t)
         self.name = self.compType + self.suffix
 
-    def toDict(self):
+    @staticmethod
+    def _removeSinCos(value: 'lcapy.expr'):
+        for arg in value.sympy.args:
+            if isinstance(arg, (sympy.sin, sympy.cos)):
+                value = value / arg
+        return value
+
+    def _toDictHomogenous(self):
+        cpxVal = self._removeSinCos(self.cpxVal)
+        value = self._removeSinCos(self.value)
+        i = self._removeSinCos(self.i)
+        u = self._removeSinCos(self.u)
+
+        return self.exportDictCpt(
+            self.name,
+            self.uName,
+            self.iName,
+            self.latexWithPrefix(cpxVal),
+            self.latexWithPrefix(value),
+            self.latexWithPrefix(u),
+            self.latexWithPrefix(i),
+            self.hasConversion
+        )
+
+    def _toDictNonHomogenous(self):
         return self.exportDictCpt(
             self.name,
             self.uName,
@@ -33,6 +61,12 @@ class DictExportElement(DictExportBase):
             self.latexWithPrefix(self.i),
             self.hasConversion
         )
+
+    def toDict(self):
+        if self.inHomogeneousCircuit:
+            return self._toDictHomogenous()
+        else:
+            return self._toDictNonHomogenous()
 
     def _convertValue(self, cpxVal) -> tuple:
         convValue, convCompType = ValueToComponent(cpxVal, self.omega_0)

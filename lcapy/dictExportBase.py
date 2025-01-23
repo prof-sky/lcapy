@@ -1,4 +1,3 @@
-from sympy.printing import print_latex
 from sympy.printing import latex
 from sympy import Float
 from typing import Union

@@ -32,6 +32,7 @@ class Solution:
 
         self.langSymbols = langSymbols
         self.mapKey = dict([("initialCircuit", "step0")])
+        self._circuitType = None
         # convert the steps returned from simplify_stepwise to SolutionSteps
         # the simplify function cant return SolutionSteps because it imports lcapy and therefor results in a circular
         # import
@@ -200,19 +201,10 @@ class Solution:
 
         return os.path.join(path, filename + f"_{step}.svg")
 
-    def exportCircuitInfo(self, step, path: str = None, filename: str ="circuit", debug: bool = False,
-                         ) -> ExportDict:
-        if path is None:
-            path = ""
-
-        self.check_path(path)
-        filename = os.path.splitext(filename)[0]
+    def exportCircuitInfo(self, step) -> ExportDict:
 
         export = DictExportCircuitInfo(self.langSymbols)
         stepData = export.getDictForStep(step, self)
-
-        if debug:
-            print(stepData)
 
         return stepData
 
@@ -341,3 +333,9 @@ class Solution:
             dicts.append(self.exportStepAsDict(step))
 
         return dicts
+
+    @property
+    def circuitType(self):
+        if not self._circuitType:
+            self._circuitType = self.exportCircuitInfo('step0')["componentTypes"]
+        return self._circuitType

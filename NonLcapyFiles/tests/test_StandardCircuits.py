@@ -5,15 +5,15 @@ import random
 
 # string is filename, integer is number of steps that shall be created
 # the initial step has to be included
-filenames = [("Circuit_inductors.txt", 5),
-             ("Circuit_resistors.txt", 5),
-             ("Circuit_capacitors.txt", 5),
-             ("Circuit_mixed_2pi30.txt", 5),
-             ("Circuit_mixed_omega0.txt", 5),
-             ("Circuit_mixed_30.txt", 5),
-             ("Circuit_mixed.txt", 5),
-             ("Circuit_resistors_I", 5),
-             ("Circuit_resistors_I_ac", 5)]
+filenames = [("Inductors.txt", 5),
+             ("Resistors.txt", 5),
+             ("Capacitors.txt", 5),
+             ("Mixed_2pi30.txt", 5),
+             ("Mixed_omega0.txt", 5),
+             ("Mixed_30.txt", 5),
+             ("Mixed.txt", 5),
+             ("Resistors_I", 5),
+             ("Resistors_I_ac", 5)]
 
 
 def clearDir(path):
