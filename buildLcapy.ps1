@@ -72,6 +72,18 @@ else{
     Set-Content -Path "NonLcapyFiles\solve.py" -Value $content
 }
 
+$content = Get-Content -Path "NonLcapyFiles\generateSVGFiles.py"
+if($content[0][0] -eq "#"){
+    $content[0] = [string]::Concat("# for lcapy version: ", $version)
+    Set-Content -Path "NonLcapyFiles\generateSVGFiles.py" -Value $content
+}
+else{
+    $newContent = ,[string]::Concat("# for lcapy version: ", $version)
+    $newContent += $content
+    $content = $newContent
+    Set-Content -Path "NonLcapyFiles\generateSVGFiles.py" -Value $content
+}
+
 Set-Location $PSScriptRoot
 Write-Host "Successfully tested and build package" -ForegroundColor Green
 Write-Host ([string]::Concat("Version is: ", $version)) -ForegroundColor Green
@@ -119,5 +131,16 @@ catch {
 Write-Output ([string]::Concat("Copied ", $newPackage, " to: ..\Pyodide\Packages\"))
 
 
-Write-Host "Successfully updated solve.py and lcapy package in Pyodide distribution" -ForegroundColor Green
+try {
+    Copy-Item -Path "NonLcapyFiles\generateSVGFiles.py" -Destination "..\Pyodide\Scripts"
+}
+catch{
+    Write-Host "could not copy solve.py" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Set-Location $startDir
+    return
+}
+Write-Output "Copied generateSVGFiles.py to: ..\Pyodide\Scripts"
+
+Write-Host "Successfully updated solve.py, generateSVGFiles.py and lcapy package in Pyodide distribution" -ForegroundColor Green
 Set-Location $startDir
