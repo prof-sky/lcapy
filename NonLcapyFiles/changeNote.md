@@ -1,3 +1,8 @@
+## 1.24+inskale.0.32
+- replace labels with max with text (123.456 mA -> ###.### ##) to adjust view box in svg when
+labels are replaced with values in frontend
+- 
+
 ## 1.24+inskale.0.31
 - enable calculation with symbolic values for dc resistor circuits
 - remove sin cos from homogenous circuits

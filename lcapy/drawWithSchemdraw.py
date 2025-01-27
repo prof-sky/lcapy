@@ -160,17 +160,19 @@ class DrawWithSchemdraw:
         value = None
         sdElement = None
 
+        # labels get the value "###.### ##" to set the viewport to max width frontend relies on correct viewport witdth
+        # to change labels to its representative value
         id_ = line.label
         if line.type == "W":
             label = ""
         elif line.type == 'V' or line.type == 'I':
-            label = id_
+            label = "###.### ##"
             value = line.value
         else:
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
             id_ = line.label
-            label = id_
+            label = "###.### ##"
 
         if line.type == "R" or line.type == "Z":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
@@ -205,11 +207,11 @@ class DrawWithSchemdraw:
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], length=1.5, class_="voltage-label arrow " + self.ls.volt + line.typeSuffix, ofst=0.15).at(sdElement)
 
         if line.type == "V" or line.type == "I":
-            self.cirDraw.add(curLabel.label("I$_{"+self.ls.total+'}$', class_='current-label arrow ' + "I"+self.ls.total, ofst=(0.1, 0)))
-            self.cirDraw.add(volLabel.reverse().label(self.ls.volt+'$_{'+self.ls.total+'}$', class_='voltage-label arrow ' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
+            self.cirDraw.add(curLabel.label('###.### ##', class_='current-label arrow ' + "I"+self.ls.total, ofst=(0.1, 0)))
+            self.cirDraw.add(volLabel.reverse().label('###.### ##', class_='voltage-label arrow ' + self.ls.volt+self.ls.total, ofst=(-0.2, 0.1)))
         elif not line.type == "W":
-            self.cirDraw.add(curLabel.label("I" + id_[1:], class_='current-label arrow ' + "I" + id_[1:], ofst=(-0.1, 0)))
-            self.cirDraw.add(volLabel.label(self.ls.volt + id_[1:], loc='bottom', class_='voltage-label arrow ' + self.ls.volt + id_[1:], ofst=(0.2, -0.1)))
+            self.cirDraw.add(curLabel.label('###.### ##', class_='current-label arrow ' + "I" + id_[1:], ofst=(-0.1, 0)))
+            self.cirDraw.add(volLabel.label('###.### ##', loc='bottom', class_='voltage-label arrow ' + self.ls.volt + id_[1:], ofst=(0.2, -0.1)))
 
     def add_connection_dots(self):
         """

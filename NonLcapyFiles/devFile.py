@@ -21,7 +21,7 @@ filenames = ["Inductors.txt",  # 0
              "VlCircuit.txt",  # 11
              "Resistor_Hetznecker.txt",  # 12
              "C_parallel_dc",  # 13
-             "Parallel3.txt",  # 14
+             "Resistor_parallel3.txt",  # 14
              "Mixed_RC_series.txt",  # 15
              "Resistors_row3.txt"  # 16
              ]
@@ -31,7 +31,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[2]
+filename = filenames[14]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -42,7 +42,7 @@ a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solu
 ExportDict.set_paths(a.savePath, a.filename)
 
 a.createInitialStep().toFiles()
-a.simplifyNCpts(["Z1", "Z2", "Z3"]).toFiles()
+a.simplifyNCpts(["Z1", "Z2"]).toFiles()
 # a.simplifyNCpts(["Zs1", "Z3"]).toFiles()
 # a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
 et = time.time()

@@ -35,6 +35,7 @@ class ExportDict(dict):
         self._errorHandling()
 
         step = self["step"]
+        fileName = os.path.splitext(fileName)[0]
         svgFilePath = os.path.join(savePath, fileName) + "_" + step + ".svg"
         svgFile = open(svgFilePath, "w", encoding="utf8")
         svgFile.write(self["svgData"])
@@ -47,6 +48,7 @@ class ExportDict(dict):
         fileName = fileName if fileName else self.file_name
 
         step = self["step"]
+        fileName = os.path.splitext(fileName)[0]
         jsonFilePath = os.path.join(savePath, fileName) + "_" + step + ".json"
         with open(jsonFilePath, "w", encoding="utf-8") as f:
             jdump(self, f, ensure_ascii=False, indent=4)
