@@ -121,12 +121,7 @@ class DictExportBase:
         return ExportDict({
                 "step": None,
                 "canBeSimplified": False,
-                "simplifiedTo": {
-                    "Z": {"name": None, "complexVal": None, "val": None},
-                    "U": {"name": None, "val": None},
-                    "I": {"name": None, "val": None},
-                    "hasConversion": None,
-                },
+                "simplifiedTo": self.emptyExportDictCpt(),
                 "componentsRelation": ComponentRelation.none.to_string(),
                 "components": [],
                 "allComponents": [],
@@ -159,13 +154,22 @@ class DictExportBase:
         })
 
     @staticmethod
-    def exportDictCpt(rName: str, uName: str, iName: str, zComplexVal, zVal, uVal, iVal,
+    def exportDictCpt(rName: str, uName: str, iName: str, zImpedance, zVal, uVal, iVal,
                       hasConversion: bool) -> ExportDict:
         return ExportDict({
-            "Z": {"name": rName, "complexVal": zComplexVal, "val": zVal},
+            "Z": {"name": rName, "impedance": zImpedance, "val": zVal},
             "U": {"name": uName, "val": uVal},
             "I": {"name": iName, "val": iVal},
             "hasConversion": hasConversion
+        })
+
+    @staticmethod
+    def emptyExportDictCpt():
+        return ExportDict({
+            "Z": {"name": None, "impedance": None, "val": None},
+            "U": {"name": None, "val": None},
+            "I": {"name": None, "val": None},
+            "hasConversion": False
         })
 
     def step0ExportDictSource(self, sourceType: str, omega_0, val: ExportDict):

@@ -42,14 +42,14 @@ class DictExport(DictExportBase):
 
             cpts = []
             for elm in self.vcElements[:-1]:
-                cpts.append(elm.toDict())
+                cpts.append(elm.toCptDict())
 
             allCpts = []
             for elm in self.allVcElements:
-                allCpts.append(elm.toDict())
+                allCpts.append(elm.toCptDict())
 
             stepData = self.exportDict(
-                step, True, resElem.toDict(), self.relation, self.imageData, cpts, allCpts
+                step, True, resElem.toCptDict(), self.relation, self.imageData, cpts, allCpts
             )
 
             return stepData

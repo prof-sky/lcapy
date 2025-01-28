@@ -41,20 +41,14 @@ class DictExportCircuitInfo(DictExportBase):
         else:
             raise AssertionError("Voltage Source is not ac or dc")
 
-        source = self.step0ExportDictSource(source.type, cirOmega_0,
-                                            self.exportDictCpt(
-                                                source.name, self.ls.volt + self.ls.total,
-                                                "I"+self.ls.total,
-                                                None, None,
-                                                self.latexWithPrefix(source.V(t)),
-                                                self.latexWithPrefix(source.I(t)),
-                                                False
-                                            ))
+        source = DictExportElement(
+            step, solution[step].circuit, cirOmega_0, source.name, self.ls, True
+        ).toSourceDict()
 
         allCpts: list[ExportDict] = []
         for name in solution[step].circuit.reactances:
-            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls)
-            allCpts.append(vcElm.toDict())
+            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls, True)
+            allCpts.append(vcElm.toCptDict())
             compTypes.add(vcElm.compType)
 
         if len(compTypes) == 1:

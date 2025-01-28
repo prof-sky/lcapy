@@ -5,7 +5,8 @@ from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy import t
 from lcapy.dictExportBase import DictExportBase
-
+from typing import Union
+from lcapy import resistance
 
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
@@ -17,14 +18,21 @@ class DictExportElement(DictExportBase):
         self.omega_0 = omega_0
         self.inHomogeneousCircuit = inHomogeneousCircuit
 
-        self.suffix = NetlistLine(str(self.circuit[compName])).typeSuffix
+        self.suffix = self.circuit[compName].id
 
-        self.uName = self.ls.volt + self.suffix
-        self.iName = 'I' + self.suffix
         self._cpxValue, self._value, self.compType = self._convertValue(self.circuit[compName].Z)
+        if compName[0] in ["I", "V"]:
+            self.compType = compName[0]
+            self.uName = self.ls.volt + self.ls.total
+            self.iName = 'I' + self.ls.total
+        else:
+            self.uName = self.ls.volt + self.suffix
+            self.iName = 'I' + self.suffix
+
         self._i = self.circuit[compName].I(t)
         self._u = self.circuit[compName].V(t)
         self.name = self.compType + self.suffix
+        self._impedance = resistance(sympy.sqrt(sympy.im(self._cpxValue.expr)**2+sympy.re(self._cpxValue.expr)**2))
 
     @staticmethod
     def _removeSinCos(value: 'lcapy.expr'):
@@ -33,8 +41,12 @@ class DictExportElement(DictExportBase):
                 value = value / arg
         return value
 
-    def _toDictHomogenous(self):
-        cpxVal = self._removeSinCos(self.cpxVal)
+    def _toCptDictHom(self):
+        """
+        toComponentDictHomogenous
+        :return: a self.exportDictCpt in a homogenous circuit (only R, L or C) -> cancel out all sin and cos in results
+        """
+        impedance = self._removeSinCos(self.impedance)
         value = self._removeSinCos(self.value)
         i = self._removeSinCos(self.i)
         u = self._removeSinCos(self.u)
@@ -43,51 +55,69 @@ class DictExportElement(DictExportBase):
             self.name,
             self.uName,
             self.iName,
-            self.latexWithPrefix(cpxVal),
+            self.latexWithPrefix(impedance),
             self.latexWithPrefix(value),
             self.latexWithPrefix(u),
             self.latexWithPrefix(i),
             self.hasConversion
         )
 
-    def _toDictNonHomogenous(self):
+    def _toCptDictNHom(self):
+        """
+        toComponentDictNonHomogenous
+        :return: a self.exportDictCpt in a non-homogenous circuit (R, L, C in some combination) -> return results as
+        they are calculated by lcapy
+        """
         return self.exportDictCpt(
             self.name,
             self.uName,
             self.iName,
-            self.latexWithPrefix(self.cpxVal),
+            self.latexWithPrefix(self.impedance),
             self.latexWithPrefix(self.value),
             self.latexWithPrefix(self.u),
             self.latexWithPrefix(self.i),
             self.hasConversion
         )
 
-    def toDict(self):
+    def toCptDict(self):
         if self.inHomogeneousCircuit:
-            return self._toDictHomogenous()
+            return self._toCptDictHom()
         else:
-            return self._toDictNonHomogenous()
+            return self._toCptDictNHom()
+
+    def _returnVal(self, value, prefixed=False) -> Union['lcapy.expr', sympy.Mul, str]:
+        if prefixed:
+            return self.prefixer.getSIPrefixedExpr(value)
+        else:
+            return value
+
+    def toSourceDict(self):
+        return self.step0ExportDictSource(self.compType, self.omega_0, self.toCptDict())
 
     def _convertValue(self, cpxVal) -> tuple:
         convValue, convCompType = ValueToComponent(cpxVal, self.omega_0)
         return cpxVal, uwa.addUnit(convValue, convCompType), convCompType
 
     @property
-    def value(self):
-        return self.prefixer.getSIPrefixedExpr(self._value)
+    def value(self, prefixed=True):
+        return self._returnVal(self._value, prefixed)
 
     @property
-    def cpxVal(self):
-        return self.prefixer.getSIPrefixedExpr(self._cpxValue)
+    def cpxVal(self, prefixed=True):
+        return self._returnVal(self._cpxValue, prefixed)
 
     @property
-    def i(self):
-        return self.prefixer.getSIPrefixedExpr(self._i)
+    def i(self, prefixed=True):
+        return self._returnVal(self._i, prefixed)
 
     @property
-    def u(self):
-        return self.prefixer.getSIPrefixedExpr(self._u)
+    def u(self, prefixed=True):
+        return self._returnVal(self._u, prefixed)
 
     @property
     def hasConversion(self) -> bool:
         return not self.compType == "Z"
+
+    @property
+    def impedance(self, prefixed=True):
+        return self._returnVal(self._impedance, prefixed)
