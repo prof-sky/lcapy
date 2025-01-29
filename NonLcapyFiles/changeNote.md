@@ -2,6 +2,7 @@
 - replace labels with max with text (123.456 mA -> ###.### ##) to adjust view box in svg when
 labels are replaced with values in frontend
 - return impedance instead of complex value in solution dict
+- only remove sin cos in homogenous circuit
 
 ## 1.24+inskale.0.31
 - enable calculation with symbolic values for dc resistor circuits

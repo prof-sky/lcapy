@@ -41,6 +41,8 @@ class Solution:
         # name and add first Circuit
         self.available_steps.append("step0")
         self.__setitem__("step0", solSteps[0])
+        self.circuitType = self._getCircuitType()
+
         if len(solSteps) >= 2:
             self["step0"].nextStep = solSteps[1]
         else:
@@ -57,8 +59,6 @@ class Solution:
             # the list index is only to len(list) -1 accessible
             if i + 1 <= len(solSteps) - 1:
                 self[curStep].nextStep = solSteps[i + 1]
-
-        self.circuitType = self._getCircuitType()
 
     def __getitem__(self, key):
         try:
