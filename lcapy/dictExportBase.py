@@ -57,10 +57,11 @@ class ExportDict(dict):
 
 
 class DictExportBase:
-    def __init__(self, precision: int, langSymbol: LangSymbols):
+    def __init__(self, precision: int, langSymbol: LangSymbols, circuitType: str = "RLC"):
         self.precision = precision
         self.prefixer = SIUnitPrefixer()
         self.ls = langSymbol
+        self.isHomCir = True if circuitType in ['R', 'L', 'C'] else False  # only has one type of components (except source) e.g. R or C not R and C
 
     def _latexRealNumber(self, value: Union[Mul, Expr], prec=None, addPrefix: bool = True) -> str:
         if prec is None:

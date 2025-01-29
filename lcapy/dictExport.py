@@ -19,15 +19,14 @@ class DictExport(DictExportBase):
     in the user based mode not all information can be known when those files are generated
     """
 
-    def __init__(self, langSymbol: LangSymbols(), isHomogeneousCircuit=False, precision=3):
-        super().__init__(precision, langSymbol)
+    def __init__(self, langSymbol: LangSymbols(), circuitType="RLC", precision=3):
+        super().__init__(precision, langSymbol, circuitType)
         # this class automatically prefixes every field that includes val or Val in the name and transforms it to
         # a latex string before exporting the dictionary
         self.circuit: 'lcapy.Circuit' = None
         self.simpCircuit: 'lcapy.Circuit' = None
         self.omega_0 = None
         self.imageData = None
-        self.isHomogeneousCircuit = isHomogeneousCircuit  # only has one type of components (except source) e.g. R or C not R and C
 
         self.vcElements: list[DictExportElement] = []
         self.allVcElements: list[DictExportElement] = []
@@ -60,27 +59,26 @@ class DictExport(DictExportBase):
         else:
             return self.emptyExportDict
 
-    def _updateObjectValues(self, step: str, solution: 'lcapy.Solution', circuitType="RLC"):
+    def _updateObjectValues(self, step: str, solution: 'lcapy.Solution'):
         self.solStep: 'lcapy.solutionStep' = solution[step]
         self.simpCircuit: 'lcapy.Circuit' = solution[step].circuit  # circuit with less elements (n elements)
         self.omega_0 = getOmegaFromCircuit(self.simpCircuit, getSourcesFromCircuit(self.simpCircuit))
         self.imageData = solution[step].getImageData(langSymbols=self.ls)
-        self.circuitType = circuitType
 
         if not self._isInitialStep():
             self.circuit: 'lcapy.Circuit' = solution[step].lastStep.circuit  # circuit with more elements (n+m elements)
 
             for name in solution[step].cpts:
                 self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.ls,
-                                                         inHomogeneousCircuit=True))
+                                                         self.isHomCir))
             self.vcElements.append(
                 DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.ls,
-                                  inHomogeneousCircuit=True))
+                                  self.isHomCir))
             self._updateCompRel()
 
             for name in solution[step].circuit.reactances:
                 self.allVcElements.append(DictExportElement(self.solStep, solution[step].circuit, self.omega_0, name,
-                                                            self.ls, inHomogeneousCircuit=True))
+                                                            self.ls, self.isHomCir))
 
     def _updateCompRel(self):
         if self.solStep.relation == ComponentRelation.parallel:

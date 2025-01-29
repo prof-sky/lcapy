@@ -1,8 +1,4 @@
 import os.path
-from enum import Enum
-
-import sympy
-
 import json
 from lcapy import ConstantDomainExpression
 from .solutionStep import SolutionStep
@@ -18,6 +14,7 @@ from lcapy.unitWorkAround import UnitWorkAround as uwa
 from typing import Union
 from lcapy.langSymbols import LangSymbols
 from lcapy.dictExportBase import ExportDict
+from lcapy.impedanceConverter import ImpedanceToComponent
 
 
 class Solution:
@@ -32,10 +29,9 @@ class Solution:
 
         self.langSymbols = langSymbols
         self.mapKey = dict([("initialCircuit", "step0")])
-        self._circuitType = None
+
         # convert the steps returned from simplify_stepwise to SolutionSteps
         # the simplify function cant return SolutionSteps because it imports lcapy and therefor results in a circular
-        # import
         solSteps = steps
 
         if not solSteps:
@@ -61,6 +57,8 @@ class Solution:
             # the list index is only to len(list) -1 accessible
             if i + 1 <= len(solSteps) - 1:
                 self[curStep].nextStep = solSteps[i + 1]
+
+        self.circuitType = self._getCircuitType()
 
     def __getitem__(self, key):
         try:
@@ -203,7 +201,7 @@ class Solution:
 
     def exportCircuitInfo(self, step) -> ExportDict:
 
-        export = DictExportCircuitInfo(self.langSymbols)
+        export = DictExportCircuitInfo(self.langSymbols, self.circuitType)
         stepData = export.getDictForStep(step, self)
 
         return stepData
@@ -240,7 +238,7 @@ class Solution:
         :param step: the step that is exported as the jason
         :return:
         """
-        return DictExport(langSymbol=self.langSymbols).getDictForStep(step, self)
+        return DictExport(langSymbol=self.langSymbols, circuitType=self.circuitType).getDictForStep(step, self)
 
     def exportStepAsJson(self, step: str, path: str = None, filename: str ="circuit", debug: bool = False,
                          ) -> str:
@@ -334,8 +332,22 @@ class Solution:
 
         return dicts
 
-    @property
-    def circuitType(self):
-        if not self._circuitType:
-            self._circuitType = self.exportCircuitInfo('step0')["componentTypes"]
-        return self._circuitType
+    def _getCircuitType(self):
+
+        circuitType = "RLC"
+        types = set()
+        for cptName in self['step0'].circuit.reactances:
+            cptType = ImpedanceToComponent(str(self['step0'].circuit[cptName]))[0]
+            types.add(cptType)
+
+        if len(types) == 1:
+            if "R" in types:
+                circuitType = "R"
+            elif "L" in types:
+                circuitType = "L"
+            elif "C" in types:
+                circuitType = "C"
+            else:
+                raise ValueError("Unexpected type in set types")
+
+        return circuitType

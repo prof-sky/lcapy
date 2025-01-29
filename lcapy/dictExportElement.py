@@ -1,6 +1,5 @@
 import sympy
 
-from lcapy.netlistLine import NetlistLine
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy import t
@@ -8,15 +7,18 @@ from lcapy.dictExportBase import DictExportBase
 from typing import Union
 from lcapy import resistance
 
+
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
                  omega_0, compName: str, langSymbols: 'lcapy.langSymbols.LangSymbols',
-                 inHomogeneousCircuit=False, precision=3):
+                 inHomCir=False, precision=3):
         super().__init__(precision=precision, langSymbol=langSymbols)
         self.circuit = circuit
         self.solStep = solStep
         self.omega_0 = omega_0
-        self.inHomogeneousCircuit = inHomogeneousCircuit
+
+        self.toCptDict = self._toCptDictHom if inHomCir else self._toCptDictNHom
+        self.inHomogeneousCircuit = inHomCir
 
         self.suffix = self.circuit[compName].id
 
@@ -41,7 +43,7 @@ class DictExportElement(DictExportBase):
                 value = value / arg
         return value
 
-    def _toCptDictHom(self):
+    def _toCptDictHom(self) -> 'ExportDict':
         """
         toComponentDictHomogenous
         :return: a self.exportDictCpt in a homogenous circuit (only R, L or C) -> cancel out all sin and cos in results
@@ -62,7 +64,7 @@ class DictExportElement(DictExportBase):
             self.hasConversion
         )
 
-    def _toCptDictNHom(self):
+    def _toCptDictNHom(self) -> 'ExportDict':
         """
         toComponentDictNonHomogenous
         :return: a self.exportDictCpt in a non-homogenous circuit (R, L, C in some combination) -> return results as
@@ -79,11 +81,9 @@ class DictExportElement(DictExportBase):
             self.hasConversion
         )
 
-    def toCptDict(self):
-        if self.inHomogeneousCircuit:
-            return self._toCptDictHom()
-        else:
-            return self._toCptDictNHom()
+    def toCptDict(self) -> 'ExportDict':
+        # dynamically assigned at runtime see __init__
+        pass
 
     def _returnVal(self, value, prefixed=False) -> Union['lcapy.expr', sympy.Mul, str]:
         if prefixed:

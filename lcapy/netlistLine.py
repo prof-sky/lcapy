@@ -142,10 +142,12 @@ class NetlistLine:
         # white space insensitive
         ref2 = ref.replace(' ', '')
 
-        if not self.reconstructed == ref and not self.reconstructed == ref2:
-            raise RuntimeError(f"Error while parsing {self.line}: reconstructed -> {self.reconstructed}")
-        if not ref == self.reconstructed and ref2 == self.reconstructed:
-            warn(f"potential error while parsing {self.line}: reconstructed -> {self.reconstructed}")
+        reconstructed = self.reconstruct()
+
+        if not reconstructed == ref and not reconstructed == ref2:
+            raise RuntimeError(f"Error while parsing {self.line}: reconstructed -> {self.reconstruct}")
+        if not ref == reconstructed and ref2 == reconstructed:
+            warn(f"potential error while parsing {self.line}: reconstructed -> {self.reconstruct}")
 
     def __str__(self):
         return str(self.cpt)

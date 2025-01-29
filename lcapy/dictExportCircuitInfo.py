@@ -11,15 +11,12 @@ from lcapy import t
 
 
 class DictExportCircuitInfo(DictExportBase):
-    def __init__(self, langSymbols: LangSymbols(), precision=3):
-        super().__init__(precision, langSymbols)
+    def __init__(self, langSymbols: LangSymbols(), cirType="RLC", precision=3):
+        super().__init__(precision, langSymbols, cirType)
         self.omega_0 = None
+        self.cirType = cirType
 
     def getDictForStep(self, step, solution: 'lcapy.Solution') -> ExportDict:
-        compTypes = set()
-
-        cirType = "RLC"
-
         sources = solution[step].circuit.sources
         if not len(sources) == 1:
             raise AssertionError(f"Number of sources has to be one, sources: {sources}")
@@ -42,23 +39,12 @@ class DictExportCircuitInfo(DictExportBase):
             raise AssertionError("Voltage Source is not ac or dc")
 
         source = DictExportElement(
-            step, solution[step].circuit, cirOmega_0, source.name, self.ls, True
+            step, solution[step].circuit, cirOmega_0, source.name, self.ls, self.isHomCir
         ).toSourceDict()
 
         allCpts: list[ExportDict] = []
         for name in solution[step].circuit.reactances:
-            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls, True)
+            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls, self.isHomCir)
             allCpts.append(vcElm.toCptDict())
-            compTypes.add(vcElm.compType)
 
-        if len(compTypes) == 1:
-            if "R" in compTypes:
-                cirType = "R"
-            elif "L" in compTypes:
-                cirType = "L"
-            elif "C" in compTypes:
-                cirType = "C"
-            else:
-                raise ValueError("Unexpected type in set types")
-
-        return self.step0ExportDict(step, source, allCpts, cirType, solution[step].getImageData(self.ls))
+        return self.step0ExportDict(step, source, allCpts, self.cirType, solution[step].getImageData(self.ls))
