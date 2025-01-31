@@ -19,8 +19,8 @@ class DictExport(DictExportBase):
     in the user based mode not all information can be known when those files are generated
     """
 
-    def __init__(self, langSymbol: LangSymbols(), circuitType="RLC", precision=3):
-        super().__init__(precision, langSymbol, circuitType)
+    def __init__(self, langSymbol: LangSymbols(), circuitType="RLC", isSymbolic=False, precision=3):
+        super().__init__(precision, langSymbol, circuitType, isSymbolic)
         # this class automatically prefixes every field that includes val or Val in the name and transforms it to
         # a latex string before exporting the dictionary
         self.circuit: 'lcapy.Circuit' = None
@@ -70,15 +70,15 @@ class DictExport(DictExportBase):
 
             for name in solution[step].cpts:
                 self.vcElements.append(DictExportElement(self.solStep, self.circuit, self.omega_0, name, self.ls,
-                                                         self.isHomCir))
+                                                         self.isHomCir, prefAndUnit=(not self.isSymbolic)))
             self.vcElements.append(
                 DictExportElement(self.solStep, self.simpCircuit, self.omega_0, solution[step].newCptName, self.ls,
-                                  self.isHomCir))
+                                  self.isHomCir, prefAndUnit=(not self.isSymbolic)))
             self._updateCompRel()
 
             for name in solution[step].circuit.reactances:
                 self.allVcElements.append(DictExportElement(self.solStep, solution[step].circuit, self.omega_0, name,
-                                                            self.ls, self.isHomCir))
+                                                            self.ls, self.isHomCir, prefAndUnit=(not self.isSymbolic)))
 
     def _updateCompRel(self):
         if self.solStep.relation == ComponentRelation.parallel:

@@ -11,8 +11,8 @@ from lcapy import t
 
 
 class DictExportCircuitInfo(DictExportBase):
-    def __init__(self, langSymbols: LangSymbols(), cirType="RLC", precision=3):
-        super().__init__(precision, langSymbols, cirType)
+    def __init__(self, langSymbols: LangSymbols(), cirType="RLC", isSymbolic=False, precision=3):
+        super().__init__(precision, langSymbols, cirType, isSymbolic)
         self.omega_0 = None
         self.cirType = cirType
 
@@ -39,12 +39,14 @@ class DictExportCircuitInfo(DictExportBase):
             raise AssertionError("Voltage Source is not ac or dc")
 
         source = DictExportElement(
-            step, solution[step].circuit, cirOmega_0, source.name, self.ls, self.isHomCir
+            step, solution[step].circuit, cirOmega_0, source.name, self.ls, self.isHomCir,
+            prefAndUnit=(not self.isSymbolic)
         ).toSourceDict()
 
         allCpts: list[ExportDict] = []
         for name in solution[step].circuit.reactances:
-            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls, self.isHomCir)
+            vcElm = DictExportElement(step, solution[step].circuit, self.omega_0, name, self.ls, self.isHomCir,
+                                      prefAndUnit=(not self.isSymbolic))
             allCpts.append(vcElm.toCptDict())
 
         return self.step0ExportDict(step, source, allCpts, self.cirType, solution[step].getImageData(self.ls))

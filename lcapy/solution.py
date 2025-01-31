@@ -1,5 +1,8 @@
 import os.path
 import json
+
+import sympy
+
 from lcapy import ConstantDomainExpression
 from .solutionStep import SolutionStep
 from ordered_set import OrderedSet
@@ -42,6 +45,7 @@ class Solution:
         self.available_steps.append("step0")
         self.__setitem__("step0", solSteps[0])
         self.circuitType = self._getCircuitType()
+        self.isSymbolic = self._isSymbolic()
 
         if len(solSteps) >= 2:
             self["step0"].nextStep = solSteps[1]
@@ -238,7 +242,7 @@ class Solution:
         :param step: the step that is exported as the jason
         :return:
         """
-        return DictExport(langSymbol=self.langSymbols, circuitType=self.circuitType).getDictForStep(step, self)
+        return DictExport(self.langSymbols, self.circuitType, self.isSymbolic).getDictForStep(step, self)
 
     def exportStepAsJson(self, step: str, path: str = None, filename: str ="circuit", debug: bool = False,
                          ) -> str:
@@ -351,3 +355,14 @@ class Solution:
                 raise ValueError("Unexpected type in set types")
 
         return circuitType
+
+    def _isSymbolic(self):
+
+        isSymbolic = True
+        for cptName in self['step0'].circuit.reactances:
+            if not self['step0'].circuit[cptName].impedance.symbols:
+                isSymbolic = False
+                break
+
+        return isSymbolic
+

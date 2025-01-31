@@ -199,9 +199,9 @@ class DrawWithSchemdraw:
             raise RuntimeError(f"unknown element type {line.type}")
 
         if line.drawParam == "left" or line.drawParam == "right":
-            self.addElement(sdElement.label(label, ofst=0.2, class_='element-label ' + label), line)
+            self.addElement(sdElement.label(label, ofst=0.2, class_='element-label ' + id_), line)
         else:
-            self.addElement(sdElement.label(label, ofst=(-0.4, -0.1), class_='element-label ' + label), line)
+            self.addElement(sdElement.label(label, ofst=(-0.4, -0.1), class_='element-label ' + id_), line)
 
         curLabel = elm.CurrentLabelInline(direction='in', class_="current-label arrow I" + line.typeSuffix).at(sdElement)
         volLabel = elm.CurrentLabel(top=self.labelPos[line.drawParam], length=1.5, class_="voltage-label arrow " + self.ls.volt + line.typeSuffix, ofst=0.15).at(sdElement)

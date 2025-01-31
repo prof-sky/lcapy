@@ -11,11 +11,14 @@ from lcapy import resistance
 class DictExportElement(DictExportBase):
     def __init__(self, solStep: 'lcapy.solutionStep', circuit: 'lcapy.Circuit',
                  omega_0, compName: str, langSymbols: 'lcapy.langSymbols.LangSymbols',
-                 inHomCir=False, precision=3):
-        super().__init__(precision=precision, langSymbol=langSymbols)
+                 inHomCir=False, prefAndUnit=True, precision=3):
+        super().__init__(precision=precision, langSymbol=langSymbols, isSymbolic=(not prefAndUnit))
         self.circuit = circuit
         self.solStep = solStep
         self.omega_0 = omega_0
+
+        self._returnVal = self.prefixer.getSIPrefixedExpr if prefAndUnit else self._returnExpr
+        self.prefAndUnit = prefAndUnit
 
         self.toCptDict = self._toCptDictHom if inHomCir else self._toCptDictNHom
         self.inHomogeneousCircuit = inHomCir
@@ -61,10 +64,10 @@ class DictExportElement(DictExportBase):
             self.name,
             self.uName,
             self.iName,
-            self.latexWithPrefix(impedance),
-            self.latexWithPrefix(value),
-            self.latexWithPrefix(u),
-            self.latexWithPrefix(i),
+            self.toLatex(impedance),
+            self.toLatex(value),
+            self.toLatex(u),
+            self.toLatex(i),
             self.hasConversion
         )
 
@@ -78,10 +81,10 @@ class DictExportElement(DictExportBase):
             self.name,
             self.uName,
             self.iName,
-            self.latexWithPrefix(self.impedance),
-            self.latexWithPrefix(self.value),
-            self.latexWithPrefix(self.u),
-            self.latexWithPrefix(self.i),
+            self.impedance,
+            self.value,
+            self.u,
+            self.i,
             self.hasConversion
         )
 
@@ -89,11 +92,9 @@ class DictExportElement(DictExportBase):
         # dynamically assigned at runtime see __init__
         pass
 
-    def _returnVal(self, value, prefixed=False) -> Union['lcapy.expr', sympy.Mul, str]:
-        if prefixed:
-            return self.prefixer.getSIPrefixedExpr(value)
-        else:
-            return value
+    @staticmethod
+    def _returnExpr(value) -> Union[sympy.Mul, str]:
+        return value
 
     def toSourceDict(self):
         return self.step0ExportDictSource(self.compType, self.omega_0, self.toCptDict())
@@ -103,25 +104,25 @@ class DictExportElement(DictExportBase):
         return cpxVal, uwa.addUnit(convValue, convCompType), convCompType
 
     @property
-    def value(self, prefixed=True):
-        return self._returnVal(self._value, prefixed)
+    def value(self):
+        return self._returnVal(self._value)
 
     @property
-    def cpxVal(self, prefixed=True):
-        return self._returnVal(self._cpxValue, prefixed)
+    def cpxVal(self):
+        return self._returnVal(self._cpxValue)
 
     @property
-    def i(self, prefixed=True):
-        return self._returnVal(self._i, prefixed)
+    def i(self):
+        return self._returnVal(self._i)
 
     @property
-    def u(self, prefixed=True):
-        return self._returnVal(self._u, prefixed)
+    def u(self):
+        return self._returnVal(self._u)
 
     @property
     def hasConversion(self) -> bool:
         return not self.compType == "Z"
 
     @property
-    def impedance(self, prefixed=True):
-        return self._returnVal(self._impedance, prefixed)
+    def impedance(self):
+        return self._returnVal(self._impedance)

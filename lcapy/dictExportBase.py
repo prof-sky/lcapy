@@ -57,11 +57,12 @@ class ExportDict(dict):
 
 
 class DictExportBase:
-    def __init__(self, precision: int, langSymbol: LangSymbols, circuitType: str = "RLC"):
+    def __init__(self, precision: int, langSymbol: LangSymbols, circuitType: str = "RLC", isSymbolic=False):
         self.precision = precision
         self.prefixer = SIUnitPrefixer()
         self.ls = langSymbol
         self.isHomCir = True if circuitType in ['R', 'L', 'C'] else False  # only has one type of components (except source) e.g. R or C not R and C
+        self.isSymbolic = isSymbolic
 
     def _latexRealNumber(self, value: Union[Mul, Expr], prec=None, addPrefix: bool = True) -> str:
         if prec is None:
@@ -85,6 +86,17 @@ class DictExportBase:
 
         test = latex(value.evalf(n=3, chop=True))
         return test
+
+    def toLatex(self, toPrint):
+        if not self.isSymbolic:
+            toPrint = 1.0 * toPrint.expr_with_units
+        else:
+            toPrint = toPrint.expr
+
+        for val in list(toPrint.atoms(Float)):
+            toPrint = toPrint.evalf(subs={val: str(round(val, self.precision))})
+        latexString = latex(toPrint, imaginary_unit="j")
+        return latexString
 
     def latexWithPrefix(self, value: Union[Mul, Expr], prec=None, addPrefix: bool = True) -> str:
         if value.is_Add:
