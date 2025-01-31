@@ -81,10 +81,10 @@ class DictExportElement(DictExportBase):
             self.name,
             self.uName,
             self.iName,
-            self.impedance,
-            self.value,
-            self.u,
-            self.i,
+            self.latexWithPrefix(self.impedance),
+            self.latexWithPrefix(self.value),
+            self.latexWithPrefix(self.u),
+            self.latexWithPrefix(self.i),
             self.hasConversion
         )
 

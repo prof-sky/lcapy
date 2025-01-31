@@ -9,6 +9,7 @@ import os
 from json import dump as jdump
 from lcapy.langSymbols import LangSymbols
 
+import sympy
 
 class ExportDict(dict):
     save_path = None
@@ -76,7 +77,10 @@ class DictExportBase:
             else:
                 toPrint = 1.0 * value
 
-        for val in list(toPrint.atoms(Float)):
+        # evaluate because expressions like 60*pi*Hz need to be evaluated to 188.49555921539 before rounding
+        toPrint = toPrint.evalf()
+        atomsList = list(toPrint.atoms(Float))
+        for val in atomsList:
             toPrint = toPrint.evalf(subs={val: str(round(val, prec))})
         latexString = latex(toPrint, imaginary_unit="j")
         return latexString

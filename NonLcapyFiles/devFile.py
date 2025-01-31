@@ -23,7 +23,8 @@ filenames = ["Inductors.txt",  # 0
              "C_parallel_dc",  # 13
              "Resistor_parallel3.txt",  # 14
              "Mixed_RC_series.txt",  # 15
-             "Resistors_row3.txt"  # 16
+             "Resistors_row3.txt",  # 16
+             "00_mixed_RC_series.txt"  # 17
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -31,7 +32,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[2]
+filename = filenames[17]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
