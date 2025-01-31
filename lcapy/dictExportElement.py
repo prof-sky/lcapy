@@ -32,6 +32,10 @@ class DictExportElement(DictExportBase):
             self.iName = 'I' + self.suffix
 
         self._i = self.circuit[compName].I(t)
+        # if it is a capacitor in an ac circuit where sin and cos is canceled out with _removeSinCos current
+        # gets negative
+        self._i = self._i * -1 if self.compType == "C" and self.circuit.has_ac and inHomCir else self._i
+
         self._u = self.circuit[compName].V(t)
         self.name = self.compType + self.suffix
         self._impedance = resistance(sympy.sqrt(sympy.im(self._cpxValue.expr)**2+sympy.re(self._cpxValue.expr)**2))
