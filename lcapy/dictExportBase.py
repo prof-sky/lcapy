@@ -1,5 +1,6 @@
 from sympy.printing import latex
 from sympy import Float
+from sympy import simplify
 from typing import Union
 from sympy import Mul
 from lcapy import Expr
@@ -28,7 +29,7 @@ class ExportDict(dict):
 
     def toFiles(self, savePath=None, fileName=None):
 
-        return True, self.toJSON(), self.toSVG()
+        return True, self.toJSON(savePath, fileName), self.toSVG(savePath, fileName)
 
     def toSVG(self, savePath=None, fileName=None) -> str:
         savePath = savePath if savePath else self.save_path
@@ -92,10 +93,10 @@ class DictExportBase:
         return test
 
     def toLatex(self, toPrint):
-        if not self.isSymbolic:
-            toPrint = 1.0 * toPrint.expr_with_units
+        if self.isSymbolic:
+            toPrint = simplify(toPrint.expr)
         else:
-            toPrint = toPrint.expr
+            toPrint = 1.0 * toPrint.expr_with_units
 
         for val in list(toPrint.atoms(Float)):
             toPrint = toPrint.evalf(subs={val: str(round(val, self.precision))})

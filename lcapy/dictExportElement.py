@@ -17,7 +17,7 @@ class DictExportElement(DictExportBase):
         self.solStep = solStep
         self.omega_0 = omega_0
 
-        self._returnVal = self.prefixer.getSIPrefixedExpr if prefAndUnit else self._returnExpr
+        self._returnFkt = self.prefixer.getSIPrefixedExpr if prefAndUnit else self._returnExpr
         self.prefAndUnit = prefAndUnit
 
         self.toCptDict = self._toCptDictHom if inHomCir else self._toCptDictNHom
@@ -105,19 +105,19 @@ class DictExportElement(DictExportBase):
 
     @property
     def value(self):
-        return self._returnVal(self._value)
+        return self._returnFkt(self._value)
 
     @property
     def cpxVal(self):
-        return self._returnVal(self._cpxValue)
+        return self._returnFkt(self._cpxValue)
 
     @property
     def i(self):
-        return self._returnVal(self._i)
+        return self._returnFkt(self._i)
 
     @property
     def u(self):
-        return self._returnVal(self._u)
+        return self._returnFkt(self._u)
 
     @property
     def hasConversion(self) -> bool:
@@ -125,4 +125,8 @@ class DictExportElement(DictExportBase):
 
     @property
     def impedance(self):
-        return self._returnVal(self._impedance)
+        return self._returnFkt(self._impedance)
+
+    @property
+    def phasor(self):
+        return self._returnFkt(self._phasor)

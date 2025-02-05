@@ -205,7 +205,7 @@ class Solution:
 
     def exportCircuitInfo(self, step) -> ExportDict:
 
-        export = DictExportCircuitInfo(self.langSymbols, self.circuitType)
+        export = DictExportCircuitInfo(self.langSymbols, self.circuitType, self.isSymbolic)
         stepData = export.getDictForStep(step, self)
 
         return stepData
