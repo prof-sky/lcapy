@@ -5,7 +5,11 @@ import time
 from datetime import datetime
 from lcapy.validateCircuitFile import ValidateCircuitFile
 from lcapy.dictExportBase import ExportDict
+import cProfile
 
+def work():
+    a.createInitialStep().toFiles()
+    a.simplifyNCpts(["Z1", "Z2"]).toFiles()
 
 filenames = ["Inductors.txt",  # 0
              "Resistors.txt",  # 1
@@ -24,7 +28,8 @@ filenames = ["Inductors.txt",  # 0
              "Resistor_parallel3.txt",  # 14
              "Mixed_RC_series.txt",  # 15
              "Resistors_row3.txt",  # 16
-             "00_mixed_RC_series.txt"  # 17
+             "00_mixed_RC_series.txt",  # 17
+             "Circuit_mixed_omega0.txt"  # 18
              ]
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -32,7 +37,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[16]
+filename = filenames[17]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -41,11 +46,7 @@ st = time.time()
 # solve.solve_circuit(filename, filePath="StandardCircuits")
 a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions", langSymbols={"volt": "U", "total": "ges"})
 ExportDict.set_paths(a.savePath, a.filename)
-
-a.createInitialStep().toFiles()
-a.simplifyNCpts(["Z1", "Z2"]).toFiles()
-# a.simplifyNCpts(["Zs1", "Z3"]).toFiles()
-# a.simplifyNCpts(["Zs2", "Z1"]).toFiles()
+cProfile.run("work()",sort="cumtime")
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

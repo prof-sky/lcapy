@@ -1,11 +1,12 @@
 import sympy
+from sympy import re,im
+from sympy.physics.units import deg
 
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
-from lcapy import t
+from lcapy import t, j, resistance, phasor, Expr
 from lcapy.dictExportBase import DictExportBase
 from typing import Union
-from lcapy import resistance
 
 
 class DictExportElement(DictExportBase):
@@ -20,7 +21,7 @@ class DictExportElement(DictExportBase):
         self._returnFkt = self.prefixer.getSIPrefixedExpr if prefAndUnit else self._returnExpr
         self.prefAndUnit = prefAndUnit
 
-        self.toCptDict = self._toCptDictHom if inHomCir else self._toCptDictNHom
+        self.toCptDict = self._toCptDictNoUnitNoPrefix if self.isSymbolic else self._toCptDict
         self.inHomogeneousCircuit = inHomCir
 
         self.suffix = self.circuit[compName].id
@@ -35,13 +36,9 @@ class DictExportElement(DictExportBase):
             self.iName = 'I' + self.suffix
 
         self._i = self.circuit[compName].I(t)
-        # if it is a capacitor in an ac circuit where sin and cos is canceled out with _removeSinCos current
-        # gets negative
-        self._i = self._i * -1 if self.compType == "C" and self.circuit.has_ac and inHomCir else self._i
-
         self._u = self.circuit[compName].V(t)
         self.name = self.compType + self.suffix
-        self._impedance = resistance(sympy.sqrt(sympy.im(self._cpxValue.expr)**2+sympy.re(self._cpxValue.expr)**2))
+        self._magnitude = resistance(sympy.sqrt(sympy.im(self._cpxValue.expr) ** 2 + sympy.re(self._cpxValue.expr) ** 2))
 
     @staticmethod
     def _removeSinCos(value: 'lcapy.expr'):
@@ -50,28 +47,29 @@ class DictExportElement(DictExportBase):
                 value = value / arg
         return value
 
-    def _toCptDictHom(self) -> 'ExportDict':
+    def _toCptDictNoUnitNoPrefix(self) -> 'ExportDict':
         """
         toComponentDictHomogenous
         :return: a self.exportDictCpt in a homogenous circuit (only R, L or C) -> cancel out all sin and cos in results
         """
-        impedance = self._removeSinCos(self.impedance)
-        value = self._removeSinCos(self.value)
-        i = self._removeSinCos(self.i)
-        u = self._removeSinCos(self.u)
-
         return self.exportDictCpt(
             self.name,
             self.uName,
             self.iName,
-            self.toLatex(impedance),
-            self.toLatex(value),
-            self.toLatex(u),
-            self.toLatex(i),
+            self.toLatex(self._magnitude),
+            self.toLatex(self._cpxValue),
+            self.toLatex(re(self._cpxValue)),
+            self.toLatex(im(self._cpxValue)),
+            self.toLatex(phasor(self._cpxValue).phase.sympy * 180 / sympy.pi*deg),
+            self.toLatex(self._value),
+            self.toLatex(self._u.as_phasor().magnitude*self._u.units),
+            self.toLatex(phasor(self._u).phase.sympy * 180 / sympy.pi*deg),
+            self.toLatex(self._i.as_phasor().magnitude),
+            self.toLatex(phasor(self._i).phase.sympy * 180 / sympy.pi * deg),
             self.hasConversion
         )
 
-    def _toCptDictNHom(self) -> 'ExportDict':
+    def _toCptDict(self) -> 'ExportDict':
         """
         toComponentDictNonHomogenous
         :return: a self.exportDictCpt in a non-homogenous circuit (R, L, C in some combination) -> return results as
@@ -81,10 +79,16 @@ class DictExportElement(DictExportBase):
             self.name,
             self.uName,
             self.iName,
-            self.latexWithPrefix(self.impedance),
-            self.latexWithPrefix(self.value),
-            self.latexWithPrefix(self.u),
-            self.latexWithPrefix(self.i),
+            self.latexWithPrefix(self._magnitude),
+            self.latexWithPrefix(self._cpxValue),
+            self.latexWithPrefix(re(self._cpxValue)),
+            self.latexWithPrefix(im(self._cpxValue)),
+            self.latexWithPrefix(phasor(self._cpxValue).phase.sympy * 180 / sympy.pi * deg),
+            self.latexWithPrefix(self._value),
+            self.latexWithPrefix(self._u.as_phasor().magnitude.sympy * self._u.units),
+            self.latexWithPrefix(phasor(self._u).phase.sympy * 180 / sympy.pi * deg),
+            self.latexWithPrefix(self._i.as_phasor().magnitude.sympy * self._i.units),
+            self.latexWithPrefix(phasor(self._i).phase.sympy * 180 / sympy.pi * deg),
             self.hasConversion
         )
 
@@ -124,9 +128,5 @@ class DictExportElement(DictExportBase):
         return not self.compType == "Z"
 
     @property
-    def impedance(self):
-        return self._returnFkt(self._impedance)
-
-    @property
-    def phasor(self):
-        return self._returnFkt(self._phasor)
+    def magnitude(self):
+        return self._returnFkt(self._magnitude)

@@ -10,7 +10,6 @@ import os
 from json import dump as jdump
 from lcapy.langSymbols import LangSymbols
 
-import sympy
 
 class ExportDict(dict):
     save_path = None
@@ -94,7 +93,10 @@ class DictExportBase:
 
     def toLatex(self, toPrint):
         if self.isSymbolic:
-            toPrint = simplify(toPrint.expr)
+            if isinstance(toPrint, Expr):
+                toPrint = simplify(toPrint.expr)
+            else:
+                pass
         else:
             toPrint = 1.0 * toPrint.expr_with_units
 
@@ -172,21 +174,21 @@ class DictExportBase:
         })
 
     @staticmethod
-    def exportDictCpt(rName: str, uName: str, iName: str, zImpedance, zVal, uVal, iVal,
-                      hasConversion: bool) -> ExportDict:
+    def exportDictCpt(rName: str, uName: str, iName: str, zImpedance, cpxVal, re, im, phase, zVal, uVal, uPhase, iVal,
+                      iPhase, hasConversion: bool) -> ExportDict:
         return ExportDict({
-            "Z": {"name": rName, "impedance": zImpedance, "val": zVal},
-            "U": {"name": uName, "val": uVal},
-            "I": {"name": iName, "val": iVal},
+            "Z": {"name": rName, "impedance": zImpedance, "cpxVal": cpxVal, "re":re, "im":im, "phase": phase, "val": zVal},
+            "U": {"name": uName, "val": uVal, "phase": uPhase},
+            "I": {"name": iName, "val": iVal, "phase": iPhase},
             "hasConversion": hasConversion
         })
 
     @staticmethod
     def emptyExportDictCpt():
         return ExportDict({
-            "Z": {"name": None, "impedance": None, "val": None},
-            "U": {"name": None, "val": None},
-            "I": {"name": None, "val": None},
+            "Z": {"name": None, "impedance": None, "cpxVal": None, "re":None, "im":None, "phase": None, "val": None},
+            "U": {"name": None, "val": None, "phase": None},
+            "I": {"name": None, "val": None, "phase": None},
             "hasConversion": False
         })
 
