@@ -25,7 +25,7 @@ class DictExport(DictExportBase):
         # a latex string before exporting the dictionary
         self.circuit: 'lcapy.Circuit' = None
         self.simpCircuit: 'lcapy.Circuit' = None
-        self.omega_0 = None
+        self.omega_0 = 0
         self.imageData = None
 
         self.vcElements: list[DictExportElement] = []

@@ -1,5 +1,11 @@
+## 1.24+inskale.0.33
+- differenciate between symbolic calculation and "normal" calculation
+- fix rounding errors (values not rounded)
+- new values in export, magnitude and phase
+- circuits with symbol for omega can not be solved anymore
+
 ## 1.24+inskale.0.32
-- replace labels with max with text (123.456 mA -> ###.### ##) to adjust view box in svg when
+- replace labels with max width text (123.456 mA -> ###.### ##) to adjust view box in svg when
 labels are replaced with values in frontend
 - return impedance instead of complex value in solution dict
 - only remove sin cos in homogenous circuit

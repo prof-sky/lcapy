@@ -13,7 +13,7 @@ from lcapy import t
 class DictExportCircuitInfo(DictExportBase):
     def __init__(self, langSymbols: LangSymbols(), cirType="RLC", isSymbolic=False, precision=3):
         super().__init__(precision, langSymbols, cirType, isSymbolic)
-        self.omega_0 = None
+        self.omega_0 = 0
         self.cirType = cirType
 
     def getDictForStep(self, step, solution: 'lcapy.Solution') -> ExportDict:

@@ -1,10 +1,9 @@
 import sympy
-from sympy import re,im
 from sympy.physics.units import deg
 
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
-from lcapy import t, j, resistance, phasor, Expr
+from lcapy import resistance, voltage, current, phasor, Expr
 from lcapy.dictExportBase import DictExportBase
 from typing import Union
 
@@ -35,10 +34,25 @@ class DictExportElement(DictExportBase):
             self.uName = self.ls.volt + self.suffix
             self.iName = 'I' + self.suffix
 
-        self._i = self.circuit[compName].I(t)
-        self._u = self.circuit[compName].V(t)
+        key = list(self.circuit[compName].V(omega_0).keys())[0]
+
+        iCpx = self.circuit[compName].I(omega_0)[key]
+        imI = sympy.im(iCpx.expr)
+        reI = sympy.re(iCpx.expr)
+        self._i = current(sympy.sqrt(imI ** 2 + reI ** 2))
+        self.iPhase = sympy.atan2(imI, reI) * 180 / sympy.pi * deg
+
+        uCpx = self.circuit[compName].V(omega_0)[key]
+        imU = sympy.im(uCpx.expr)
+        reU = sympy.re(uCpx.expr)
+        self._u = voltage(sympy.sqrt( imU ** 2 + reU ** 2))
+        self.uPhase = sympy.atan2(imU, reU) * 180 / sympy.pi * deg
+
         self.name = self.compType + self.suffix
-        self._magnitude = resistance(sympy.sqrt(sympy.im(self._cpxValue.expr) ** 2 + sympy.re(self._cpxValue.expr) ** 2))
+        self.imZ = sympy.im(self._cpxValue.expr)
+        self.reZ = sympy.re(self._cpxValue.expr)
+        self.zPhase = sympy.atan2(imU, reU) * 180 / sympy.pi * deg
+        self._magnitude = resistance(sympy.sqrt( self.imZ ** 2 + self.reZ ** 2))
 
     @staticmethod
     def _removeSinCos(value: 'lcapy.expr'):
@@ -58,14 +72,14 @@ class DictExportElement(DictExportBase):
             self.iName,
             self.toLatex(self._magnitude),
             self.toLatex(self._cpxValue),
-            self.toLatex(re(self._cpxValue)),
-            self.toLatex(im(self._cpxValue)),
-            self.toLatex(phasor(self._cpxValue).phase.sympy * 180 / sympy.pi*deg),
+            self.toLatex(self.reZ),
+            self.toLatex(self.imZ),
+            self.toLatex(self.zPhase),
             self.toLatex(self._value),
-            self.toLatex(self._u.as_phasor().magnitude*self._u.units),
-            self.toLatex(phasor(self._u).phase.sympy * 180 / sympy.pi*deg),
-            self.toLatex(self._i.as_phasor().magnitude),
-            self.toLatex(phasor(self._i).phase.sympy * 180 / sympy.pi * deg),
+            self.toLatex(self._u),
+            self.toLatex(self.uPhase),
+            self.toLatex(self._i),
+            self.toLatex(self.iPhase),
             self.hasConversion
         )
 
@@ -81,14 +95,14 @@ class DictExportElement(DictExportBase):
             self.iName,
             self.latexWithPrefix(self._magnitude),
             self.latexWithPrefix(self._cpxValue),
-            self.latexWithPrefix(re(self._cpxValue)),
-            self.latexWithPrefix(im(self._cpxValue)),
-            self.latexWithPrefix(phasor(self._cpxValue).phase.sympy * 180 / sympy.pi * deg),
+            self.latexWithPrefix(self.reZ),
+            self.latexWithPrefix(self.imZ),
+            self.latexWithPrefix(self.zPhase),
             self.latexWithPrefix(self._value),
-            self.latexWithPrefix(self._u.as_phasor().magnitude.sympy * self._u.units),
-            self.latexWithPrefix(phasor(self._u).phase.sympy * 180 / sympy.pi * deg),
-            self.latexWithPrefix(self._i.as_phasor().magnitude.sympy * self._i.units),
-            self.latexWithPrefix(phasor(self._i).phase.sympy * 180 / sympy.pi * deg),
+            self.latexWithPrefix(self._u),
+            self.latexWithPrefix(self.uPhase),
+            self.latexWithPrefix(self._i),
+            self.latexWithPrefix(self.iPhase),
             self.hasConversion
         )
 

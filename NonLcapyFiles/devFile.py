@@ -37,7 +37,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-filename = filenames[17]
+filename = filenames[4]
 
 if not ValidateCircuitFile(["StandardCircuits/"+filename]).isValid():
     exit("File not valid")
@@ -46,7 +46,7 @@ st = time.time()
 # solve.solve_circuit(filename, filePath="StandardCircuits")
 a = solve.SolveInUserOrder(filename, filePath="StandardCircuits", savePath="Solutions", langSymbols={"volt": "U", "total": "ges"})
 ExportDict.set_paths(a.savePath, a.filename)
-cProfile.run("work()",sort="cumtime")
+cProfile.run("work()",sort="tottime")
 et = time.time()
 
 print(f"Execution time was: {et-st:.2f} s, DateTime: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}")

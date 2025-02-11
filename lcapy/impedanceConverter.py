@@ -204,9 +204,9 @@ def getOmegaFromCircuit(circuit: 'Circuit', sources: list) -> Union[float, sp.Mu
             except ValueError:
                 omega_0 = value
         else:
-            omega_0 = None
+            omega_0 = 0
     else:
-        omega_0 = None
+        omega_0 = 0
 
     return omega_0
 
