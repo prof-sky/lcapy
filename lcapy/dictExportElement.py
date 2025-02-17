@@ -1,6 +1,7 @@
 import sympy
 from sympy.physics.units import deg
 
+import lcapy
 from lcapy.impedanceConverter import ValueToComponent
 from lcapy.unitWorkAround import UnitWorkAround as uwa
 from lcapy import resistance, voltage, current, phasor, Expr
@@ -52,6 +53,7 @@ class DictExportElement(DictExportBase):
         self.imZ = sympy.im(self._cpxValue.expr)
         self.reZ = sympy.re(self._cpxValue.expr)
         self.zPhase = sympy.atan2(imU, reU) * 180 / sympy.pi * deg
+        self.zPhase = sympy.atan2(self.imZ, self.reZ) * 180 / sympy.pi * deg
         self._magnitude = resistance(sympy.sqrt( self.imZ ** 2 + self.reZ ** 2))
 
     @staticmethod
@@ -95,8 +97,8 @@ class DictExportElement(DictExportBase):
             self.iName,
             self.latexWithPrefix(self._magnitude),
             self.latexWithPrefix(self._cpxValue),
-            self.latexWithPrefix(self.reZ),
-            self.latexWithPrefix(self.imZ),
+            self.latexWithPrefix(self.reZ.round(self.precision)),
+            self.latexWithPrefix(self.imZ.round(self.precision)),
             self.latexWithPrefix(self.zPhase),
             self.latexWithPrefix(self._value),
             self.latexWithPrefix(self._u),

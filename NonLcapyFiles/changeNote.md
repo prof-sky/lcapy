@@ -1,3 +1,7 @@
+## 1.24+inskale.0.34
+- fixed phase for Z
+- fix unrounded val for imaginary part of Z
+
 ## 1.24+inskale.0.33
 - differenciate between symbolic calculation and "normal" calculation
 - fix rounding errors (values not rounded)

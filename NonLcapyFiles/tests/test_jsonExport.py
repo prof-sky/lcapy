@@ -65,6 +65,14 @@ class TestJsonExport:
 
     def test_JsonExport(self):
         self.makeTestDir()
-        for filename in os.listdir(".\\Schematics"):
-            self.helperJsonExport(filename, ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("C_parallel_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("R_parallel_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("L_parallel_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("CL_parallel_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("RL_parallel_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("C_series_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("R_series_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("L_series_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("CL_series_ac", ".\\Schematics", ".\\tempTest")
+        self.helperJsonExport("RL_series_ac", ".\\Schematics", ".\\tempTest")
         self.removeDir()
