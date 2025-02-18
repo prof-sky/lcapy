@@ -1,3 +1,7 @@
+## 1.24+inskale.0.35
+- fixed resubstitution from value to component (if complex addition defaulted to inductance - error
+ in if evaluation)
+
 ## 1.24+inskale.0.34
 - fixed phase for Z
 - fix unrounded val for imaginary part of Z

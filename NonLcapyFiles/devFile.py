@@ -9,7 +9,7 @@ import cProfile
 
 def work():
     a.createInitialStep().toFiles()
-    a.simplifyNCpts(["Z1", "Z2"]).toFiles()
+    a.simplifyNCpts(["Z2", "Z3"]).toFiles()
 
 filenames = ["Inductors.txt",  # 0
              "Resistors.txt",  # 1

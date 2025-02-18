@@ -22,3 +22,4 @@ Non-Lcapy-Files/Solutions
 .idea
 dist
 NonLcapyFiles/Solutions
+NonLcapyFiles/Circuits/*/*.svg

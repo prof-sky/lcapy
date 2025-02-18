@@ -81,12 +81,9 @@ class SolveInUserOrder:
 
         sol = Solution(self.steps, langSymbols=self.langSymbols)
         newestStep = sol.available_steps[-1]
-
-        stepData = sol.exportStepAsDict(newestStep)
-
         self.circuit = newNet
 
-        return stepData
+        return sol.exportStepAsDict(newestStep)
 
     def createInitialStep(self) -> ExportDict:
         """
