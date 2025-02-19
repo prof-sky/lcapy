@@ -1,6 +1,9 @@
 ## 1.24+inskale.0.35
 - fixed resubstitution from value to component (if complex addition defaulted to inductance - error
  in if evaluation)
+- fix value error in solution.py
+- restructure Circuits folder
+- adapt tests to new structure
 
 ## 1.24+inskale.0.34
 - fixed phase for Z
