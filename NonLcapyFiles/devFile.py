@@ -19,7 +19,7 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-fixFile = True
+fixFile = False
 if fixFile:
     filePath = "Circuits/resistor"
     filename = "00_Resistor_Hetznecker.txt"

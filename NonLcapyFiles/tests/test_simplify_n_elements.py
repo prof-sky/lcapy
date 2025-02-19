@@ -13,7 +13,7 @@ class TestSimplifyNElements:
     def test_three_in_row(self):
         savePath = "../Solutions"
         self.clearDir(savePath)
-        solObj = solve.SolveInUserOrder("Resistors_row3.txt", filePath="../StandardCircuits", savePath=savePath)
+        solObj = solve.SolveInUserOrder("07_resistor_row3.txt", filePath="../Circuits/resistor", savePath=savePath)
         solObj.simplifyNCpts(["R1", "R2", "R3"])
         val1 = solObj.steps[0].circuit.Z1.Z
         val2 = solObj.steps[0].circuit.Z2.Z
@@ -24,7 +24,7 @@ class TestSimplifyNElements:
     def test_three_parallel(self):
         savePath = "../Solutions"
         self.clearDir(savePath)
-        solObj = solve.SolveInUserOrder("Resistor_parallel3.txt", filePath="../StandardCircuits", savePath=savePath)
+        solObj = solve.SolveInUserOrder("08_resistor_parallel3.txt", filePath="../Circuits/resistor", savePath=savePath)
         solObj.simplifyNCpts(["R1", "R2", "R3"])
         val1 = solObj.steps[0].circuit.Z1.Z
         val2 = solObj.steps[0].circuit.Z2.Z
