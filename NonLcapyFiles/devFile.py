@@ -10,6 +10,8 @@ import cProfile
 def work():
     a.createInitialStep().toFiles()
     a.simplifyNCpts(["Z2", "Z4"]).toFiles()
+    a.simplifyNCpts(["Zs1", "Z3"]).toFiles()
+    a.simplifyNCpts(["Z1", "Zs2"]).toFiles()
 
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -34,7 +36,7 @@ if not ValidateCircuitFile([os.path.join(filePath, filename)]).isValid():
 
 st = time.time()
 # solve.solve_circuit(filename, filePath="StandardCircuits")
-a = solve.SolveInUserOrder(filename, filePath=filePath, savePath="Solutions", langSymbols={"volt": "U", "total": "ges"})
+a = solve.SolveInUserOrder(filename, filePath=filePath, savePath="Solutions", langSymbols={"volt": "V", "total": "tot"})
 ExportDict.set_paths(a.savePath, a.filename)
 cProfile.run("work()",sort="tottime")
 et = time.time()
