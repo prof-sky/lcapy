@@ -19,7 +19,6 @@ from lcapy.langSymbols import LangSymbols
 from lcapy.dictExportBase import ExportDict
 from lcapy.impedanceConverter import ImpedanceToComponent
 
-
 class Solution:
     def __init__(self, steps: list[SolutionStep], langSymbols: LangSymbols):
         """
@@ -354,6 +353,8 @@ class Solution:
                 return "RLC"
             else:
                 raise ValueError("Unexpected type in set types")
+        else:
+            return "RLC"
 
     def _isSymbolic(self):
 
