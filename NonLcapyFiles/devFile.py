@@ -9,9 +9,7 @@ import cProfile
 
 def work():
     a.createInitialStep().toFiles()
-    a.simplifyNCpts(["Z2", "Z4"]).toFiles()
-    a.simplifyNCpts(["Zs1", "Z3"]).toFiles()
-    a.simplifyNCpts(["Z1", "Zs2"]).toFiles()
+    a.simplifyNCpts(["Z2", "Z3"]).toFiles()
 
 #  clear Solutions directory
 clearPath = "./Solutions"

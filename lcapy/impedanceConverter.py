@@ -134,7 +134,7 @@ def ValueToComponent(value, omega_0: Union[float, str] = None) -> (sp.Mul, str):
         sub_dict[str(freeSymbol)] = sp.Symbol(str(freeSymbol), finite=True, real=True, positive=True)
 
     # using the sp.im(_value) funktion equals _value/j
-    _value = _value.evalf(subs=sub_dict)
+    _value = _value.subs(sub_dict).evalf()
     if sp.re(_value).is_zero:
         if not sp.im(_value).is_negative and not sp.im(_value).is_zero:
             returnVal = sp.im(_value) / _omega_0
