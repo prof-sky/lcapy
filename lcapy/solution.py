@@ -338,7 +338,6 @@ class Solution:
 
     def _getCircuitType(self):
 
-        circuitType = "RLC"
         types = set()
         for cptName in self['step0'].circuit.reactances:
             cptType = ImpedanceToComponent(str(self['step0'].circuit[cptName]))[0]
@@ -346,15 +345,15 @@ class Solution:
 
         if len(types) == 1:
             if "R" in types:
-                circuitType = "R"
+                return "R"
             elif "L" in types:
-                circuitType = "L"
+                return "L"
             elif "C" in types:
-                circuitType = "C"
+                return "C"
+            elif "Z" in types:
+                return "RLC"
             else:
                 raise ValueError("Unexpected type in set types")
-
-        return circuitType
 
     def _isSymbolic(self):
 
