@@ -21,7 +21,12 @@ for path in os.listdir(folderPath):
 
 # create a folder to save the files in temporarily
 savePath = ".tmpSVGFiles"
-os.mkdir(savePath)
+if not os.path.exists(savePath):
+    os.mkdir(savePath)
+else:
+    shutil.rmtree(savePath)
+    os.mkdir(savePath)
+
 try:
     for folder in subFolderPaths:
 
