@@ -8,6 +8,7 @@ class NetlistGraph:
         self.graphStart: int
         self.graphEnd: int
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
+        self.graph: nx.DiGraph = self._createGraph()
     def _cleanUpNetlist(self) -> list[NetlistLine]:
         """
         Converts the netlist into an easy-to-use format and removes lines from netlist
@@ -44,5 +45,12 @@ class NetlistGraph:
             print(newLine)
 
         return cleandUpNetlist
+
+    def _createGraph(self) -> nx.DiGraph:
+        graph = nx.DiGraph()
+        for line in self.cleandUpNetlist:
+            graph.add_edge(line.startNode, line.endNode, name=line.label)
+
+        return graph
 lcapyCir = lcapy.Circuit("..\\Circuits\\resistor\\00_Resistor_Hetznecker.txt")
 a = NetlistGraph(lcapyCir)
