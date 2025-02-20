@@ -9,6 +9,7 @@ class NetlistGraph:
         self.graphEnd: int
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
         self.graph: nx.DiGraph = self._createGraph()
+        self.spanningWidth = self._findSpanningWidth()
     def _cleanUpNetlist(self) -> list[NetlistLine]:
         """
         Converts the netlist into an easy-to-use format and removes lines from netlist
@@ -52,5 +53,18 @@ class NetlistGraph:
             graph.add_edge(line.startNode, line.endNode, name=line.label)
 
         return graph
+
+    def _findSpanningWidth(self) -> int:
+        """
+        calculate the maximum count of concurrent branches to determine the needed raster width to draw netlist
+        :return: int
+        """
+        # there has to be one branch and
+        # instead of removing the endNode increase by one, the endNode has no outgoing edges therefore its result is -1
+        width = 2
+        for node in self.graph.nodes:
+            width += len(self.graph.out_edges(node)) - 1
+
+        return width
 lcapyCir = lcapy.Circuit("..\\Circuits\\resistor\\00_Resistor_Hetznecker.txt")
 a = NetlistGraph(lcapyCir)
