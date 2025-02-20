@@ -1,3 +1,4 @@
+import sympy
 from sympy.printing import latex
 from sympy import Float
 from sympy import simplify
@@ -196,6 +197,7 @@ class DictExportBase:
         return ExportDict({
             "Type": sourceType,  # V,I
             "omega_0": self.latexWithPrefix(omega_0),
+            "frequency": self.latexWithPrefix(omega_0/(2*sympy.pi)),
             "sources": val
         })
 

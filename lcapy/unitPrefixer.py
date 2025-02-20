@@ -72,6 +72,9 @@ class SIUnitPrefixer:
             -> tuple[lcapy.Expr, Prefix, int]:
         if isinstance(value, lcapy.Expr):
             value = value
+        if isinstance(value, sympy.Mul):
+            units = value.as_coeff_Mul()[1]
+            value = lcapy.expr(value/units, units=units)
         else:
             value = lcapy.expr(value)
 
