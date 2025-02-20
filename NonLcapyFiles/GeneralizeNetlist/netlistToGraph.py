@@ -10,6 +10,7 @@ class NetlistGraph:
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
         self.graph: nx.DiGraph = self._createGraph()
         self.spanningWidth = self._findSpanningWidth()
+        self.paths = self._findPaths()
     def _cleanUpNetlist(self) -> list[NetlistLine]:
         """
         Converts the netlist into an easy-to-use format and removes lines from netlist
@@ -66,5 +67,7 @@ class NetlistGraph:
             width += len(self.graph.out_edges(node)) - 1
 
         return width
+    def _findPaths(self) -> list[list]:
+        return list(nx.all_simple_paths(self.graph, self.graphStart, self.graphEnd))
 lcapyCir = lcapy.Circuit("..\\Circuits\\resistor\\00_Resistor_Hetznecker.txt")
 a = NetlistGraph(lcapyCir)
