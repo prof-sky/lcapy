@@ -17,10 +17,10 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-fixFile = False
+fixFile = True
 if fixFile:
-    filePath = "Circuits/resistor"
-    filename = "00_Resistor_Hetznecker.txt"
+    filePath = "Circuits/mixed"
+    filename = "01_mixed_RCL_parallel.txt"
 else:
     from tkinter import filedialog
     curPath = os.getcwd()

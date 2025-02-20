@@ -1,3 +1,11 @@
+## 1.24+inskale.0.36
+- fix undefined circuitType in export
+- fix wrong cpt type when symbols are used
+- fix svg file generation
+- fix svg file generation error in pipeline
+- add frequency to source export
+- add test for svg file generation
+
 ## 1.24+inskale.0.35
 - fixed resubstitution from value to component (if complex addition defaulted to inductance - error
  in if evaluation)
