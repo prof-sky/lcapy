@@ -25,13 +25,16 @@ def getFilesRecursive():
 
 class TestSVGGeneration:
     @staticmethod
-    def updateSvgAndTxtList(svgFiles, txtFiles):
+    def readAndSortFiles():
+        svgFiles = []
+        txtFiles = []
         for path, _, files in os.walk(circuitsFolderPath):
             sortFilesInLists(files, path,
                              svgFiles, lambda x: x.endswith(".svg"),
                              txtFiles, lambda x: x.endswith(".txt"),
                              lambda x: x.endswith(".stepSol")
                                   )
+        return svgFiles, txtFiles
 
     def test_svgFileGeneration(self):
         # change into the NonLcapyFiles folder
@@ -39,7 +42,7 @@ class TestSVGGeneration:
 
         svgFiles = []
         txtFiles = []
-        self.updateSvgAndTxtList(svgFiles, txtFiles)
+        svgFiles, txtFiles = self.readAndSortFiles()
 
         # check if there are svg-files that have no txt file -> indicates that might be deleted a circuit file by accident
         missingTxtFiles = self.MissingTxtFiles(svgFiles, txtFiles)
@@ -51,14 +54,14 @@ class TestSVGGeneration:
             os.remove(file)
 
         # assert that all svg files are deleted and later regenerated
-        self.updateSvgAndTxtList(svgFiles, txtFiles)
+        svgFiles, txtFiles = self.readAndSortFiles()
         assert len(svgFiles) == 0, "Removing svg files failed, check test"
 
         # generate the svg-files with the script that runs in the ci/cd
         exec(open(generateSVGFilesPath).read())
 
         # check if all svg-files got regenerated
-        self.updateSvgAndTxtList(svgFiles, txtFiles)
+        svgFiles, txtFiles = self.readAndSortFiles()
         missingSvgFiles = self.MissingSvgFiles(svgFiles, txtFiles)
         if missingSvgFiles:
             raise AssertionError(
