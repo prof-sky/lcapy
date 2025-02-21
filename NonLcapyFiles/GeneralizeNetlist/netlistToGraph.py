@@ -1,6 +1,8 @@
 import lcapy
 import networkx as nx
 from lcapy import NetlistLine
+from maxWidth import MaxWidth
+from widestPath import WidestPath
 
 class NetlistGraph:
     def __init__(self, lcapyCircuit: lcapy.Circuit):
@@ -9,8 +11,14 @@ class NetlistGraph:
         self.graphEnd: int
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
         self.graph: nx.DiGraph = self._createGraph()
-        self.spanningWidth = self._findSpanningWidth()
+        self.spanningWidth = self._findSpanningWidth(self.graph, self.graphStart, self.graphEnd)
+        print(f"branchWidth: {self.spanningWidth.width}, nodes: {self.graph.nodes}")
+        print("------------------------")
         self.paths = self._findPaths()
+        for path in self.paths:
+            nodesList = list(path)
+            branchWidth = self._findBranchWidth(self.graph.subgraph(nodesList), nodesList[0], nodesList[-1])
+            print(f"branchWidth: {branchWidth.width}, path: {nodesList}")
         self.longestPath = self._findLongestPath()
 
 
@@ -58,18 +66,50 @@ class NetlistGraph:
 
         return graph
 
-    def _findSpanningWidth(self) -> int:
+    def _findMaxSpanningWidth(self):
+        self._findSpanningWidth(self.graph, self.graphStart, self.graphEnd)
+
+    def _findBranchWidth(self, branch: nx.DiGraph, startNode, endNode) -> MaxWidth:
+        return self._findSpanningWidth(branch, startNode, endNode)
+
+    def _findWidestBranch(self) -> WidestPath:
+        maxWidth = MaxWidth(0, 0)
+        index = 0
+        for idx, path in iter(self.paths):
+            nodesList = list(path)
+            width = self._findBranchWidth(self.graph.subgraph(nodesList), nodesList[0], nodesList[-1])
+            if width.width > maxWidth.width:
+                maxWidth = width
+                index = idx
+        return WidestPath(maxWidth.width, maxWidth.depth, index, self.graph)
+
+    @staticmethod
+    def _findSpanningWidth(graph: nx.DiGraph, startNode, endNode) -> MaxWidth:
         """
         calculate the maximum count of concurrent branches to determine the needed raster width to draw netlist
         :return: int
         """
+
         # there has to be one branch and
         # instead of removing the endNode increase by one, the endNode has no outgoing edges therefore its result is -1
-        width = 2
-        for node in self.graph.nodes:
-            width += len(self.graph.out_edges(node)) - 1
+        checkNodes = list(graph.successors(startNode))
+        maxWidth = MaxWidth(0, 0)
+        iteration = 1
 
-        return width
+        while True:
+            width = len(checkNodes)
+            if width > maxWidth.width:
+                maxWidth = MaxWidth(width, iteration)
+            nextNodes = []
+            for node in checkNodes:
+                nextNodes.extend(list(graph.successors(node)))
+            if len(nextNodes) == 1 and nextNodes[0] == endNode:
+                break
+            checkNodes = nextNodes
+            iteration += 1
+
+        return maxWidth
+
     def _findPaths(self) -> list[list]:
         return list(nx.all_simple_paths(self.graph, self.graphStart, self.graphEnd))
 
