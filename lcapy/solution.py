@@ -49,7 +49,6 @@ class Solution:
         if len(solSteps) >= 2:
             self["step0"].nextStep = solSteps[1]
         else:
-            warn("Solution only contains initial circuit and no simplification Steps")
             return
 
         for i in range(1, len(solSteps)):
