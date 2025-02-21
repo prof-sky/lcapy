@@ -45,6 +45,11 @@ class NetlistGraph:
             for replaceNodeWith in nodesToReplaceWith:
                 shallBeReplaced = self.cct.equipotential_nodes[replaceNodeWith]
 
+                if str(self.graphStart) in shallBeReplaced:
+                    self.graphStart = int(replaceNodeWith)
+                if str(self.graphEnd) in shallBeReplaced:
+                    self.graphEnd = int(replaceNodeWith)
+
                 if str(line.startNode) in shallBeReplaced:
                     line.startNode = int(replaceNodeWith)
                 if str(line.endNode) in shallBeReplaced:
@@ -87,7 +92,7 @@ class NetlistGraph:
     def _findSpanningWidth(graph: nx.DiGraph, startNode, endNode) -> MaxWidth:
         """
         calculate the maximum count of concurrent branches to determine the needed raster width to draw netlist
-        :return: int
+        :return: MaxWidth object -> maxWidth and depth
         """
 
         # there has to be one branch and
@@ -122,11 +127,8 @@ class NetlistGraph:
                 foundPath = path
                 maxPathLen = curPathLen
 
-        return foundPath
+        return foundPath or list(self.paths)[0]
 
     @property
     def maxPathLength(self):
         return len(self.longestPath)
-
-lcapyCir = lcapy.Circuit("..\\Circuits\\resistor\\00_Resistor_Hetznecker.txt")
-a = NetlistGraph(lcapyCir)
