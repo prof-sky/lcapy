@@ -1,0 +1,31 @@
+V1 19 18 dc {10}; up
+W 19 20; up
+W 20 1; up
+W 1 2; right
+W 2 3; right
+R1 3 4 20; down
+R2 4 5 20; down
+W 4 6; right
+R3 6 7; down
+W 7 5; left
+R4 5 8 20; down
+W 8 9; left
+W 8 10; right
+R5 9 11; down
+R6 8 12; down
+R7 10 13; down
+R8 13 15; down
+W 13 14; right
+R9 14 30; down
+W 30 15; left
+W 15 31; left
+W 11 32; down
+W 32 31; right
+W 12 31; down
+W 31 33; down
+W 33 34; left
+W 34 35; left
+W 35 16; up
+W 16 17; up
+W 17 18; up
+
