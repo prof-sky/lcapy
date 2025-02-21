@@ -11,6 +11,30 @@ else{
     Set-Alias pythonPath python
     Set-Alias pytest pytest
 }
+
+function adjustAndMoveSolvePy{
+
+    $content = Get-Content -Path "NonLcapyFiles\solve.py"
+
+    $versionLine = [string]::Concat("# for lcapy version: ", $version, "`r`n")
+    $line1 = "import warnings`r`n"
+    $line2 = "warnings.filterwarnings('ignore')`r`n"
+    $content = $versionLine + $line1 + $line2 + ($content -join "`r`n")
+    Set-Content -Path "..\Pyodide\solve.py" -Value $content
+
+    Write-Output "Copied solve.py to: ..\Pyodide\"
+}
+
+function adjustAndMoveGenerateSVGFilesPy{
+    $content = Get-Content -Path "NonLcapyFiles\generateSVGFiles.py"
+
+    $versionLine = [string]::Concat("# for lcapy version: ", $version, "`r`n")
+    $content = $versionLine + ($content -join "`r`n")
+    Set-Content -Path "..\Pyodide\Scripts\generateSVGFiles.py" -Value $content
+
+    Write-Output "Copied generateSVGFiles.py to: ..\Pyodide\Scripts"
+}
+
 $output = [string]::Concat("executing with: ", (Get-Alias pythonPath).Definition, "`npython refers to the standard python installation or the current aktiv venv")
 Write-Output $output
 
@@ -60,29 +84,26 @@ catch{
 Set-Location $PSScriptRoot
 $version = pythonPath setup.py --version
 
-$content = Get-Content -Path "NonLcapyFiles\solve.py"
-if($content[0][0] -eq "#"){
-    $content[0] = [string]::Concat("# for lcapy version: ", $version)
-    Set-Content -Path "NonLcapyFiles\solve.py" -Value $content
+try{
+    adjustAndMoveSolvePy
 }
-else{
-    $newContent = ,[string]::Concat("# for lcapy version: ", $version)
-    $newContent += $content
-    $content = $newContent
-    Set-Content -Path "NonLcapyFiles\solve.py" -Value $content
+catch{
+    Write-Host "An error occured while handling solve.py" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Set-Location $startDir
+    return
 }
 
-$content = Get-Content -Path "NonLcapyFiles\generateSVGFiles.py"
-if($content[0][0] -eq "#"){
-    $content[0] = [string]::Concat("# for lcapy version: ", $version)
-    Set-Content -Path "NonLcapyFiles\generateSVGFiles.py" -Value $content
+try{
+    adjustAndMoveGenerateSVGFilesPy
 }
-else{
-    $newContent = ,[string]::Concat("# for lcapy version: ", $version)
-    $newContent += $content
-    $content = $newContent
-    Set-Content -Path "NonLcapyFiles\generateSVGFiles.py" -Value $content
+catch{
+    Write-Host "An error occured while handling GenerateSVGFiles.py" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Set-Location $startDir
+    return
 }
+
 
 Set-Location $PSScriptRoot
 Write-Host "Successfully tested and build package" -ForegroundColor Green
@@ -94,19 +115,6 @@ foreach($item in $oldPackages){
     Remove-Item -Path $path
     Write-Output ([string]::Concat("Removed: ", $path))
 }
-
-
-try {
-    Copy-Item -Path "NonLcapyFiles\solve.py" -Destination "..\Pyodide\"
-}
-catch{
-    Write-Host "could not copy solve.py" -ForegroundColor Red
-    Write-Host $_.Exception.Message -ForegroundColor Red
-    Set-Location $startDir
-    return
-}
-Write-Output "Copied solve.py to: ..\Pyodide\"
-
 
 try{
     $newPackage = Get-ChildItem -Path "dist" -Filter "*.whl" -File | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1
@@ -130,17 +138,6 @@ catch {
 }
 Write-Output ([string]::Concat("Copied ", $newPackage, " to: ..\Pyodide\Packages\"))
 
-
-try {
-    Copy-Item -Path "NonLcapyFiles\generateSVGFiles.py" -Destination "..\Pyodide\Scripts"
-}
-catch{
-    Write-Host "could not copy solve.py" -ForegroundColor Red
-    Write-Host $_.Exception.Message -ForegroundColor Red
-    Set-Location $startDir
-    return
-}
-Write-Output "Copied generateSVGFiles.py to: ..\Pyodide\Scripts"
 
 Write-Host "Successfully updated solve.py, generateSVGFiles.py and lcapy package in Pyodide distribution" -ForegroundColor Green
 Set-Location $startDir
