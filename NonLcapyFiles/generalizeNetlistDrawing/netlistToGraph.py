@@ -12,8 +12,9 @@ class NetlistGraph:
         self.graphEnd: int
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
         self.graph: MultiDiGraph = self._createGraph()
+        self.subGraphs: list[MultiDiGraph]
         self.spanningWidth = self._findSpanningWidth(self.graph, self.graphStart, self.graphEnd)
-        print(f"treeWidth: {self.spanningWidth.width}, nodes: {self.graph.nodes}")
+        print(f"GraphWidth: {self.spanningWidth.width}, nodes: {self.graph.nodes}")
         print("------------------------")
         self.paths = self._findPaths()
         for path in self.paths:
@@ -75,7 +76,7 @@ class NetlistGraph:
     def _findMaxSpanningWidth(self):
         self._findSpanningWidth(self.graph, self.graphStart, self.graphEnd)
 
-    def _findBranchWidth(self, branch: nx.DiGraph, startNode, endNode) -> MaxWidth:
+    def _findBranchWidth(self, branch: MultiDiGraph, startNode, endNode) -> MaxWidth:
         return self._findSpanningWidth(branch, startNode, endNode)
 
     def _findWidestBranch(self) -> WidestPath:
@@ -90,7 +91,7 @@ class NetlistGraph:
         return WidestPath(maxWidth.width, maxWidth.depth, index, self.graph)
 
     @staticmethod
-    def _findSpanningWidth(graph: nx.DiGraph, startNode, endNode) -> MaxWidth:
+    def _findSpanningWidth(graph: MultiDiGraph, startNode, endNode) -> MaxWidth:
         """
         calculate the maximum count of concurrent branches to determine the needed raster width to draw netlist
         :return: MaxWidth object -> maxWidth and depth
@@ -98,32 +99,40 @@ class NetlistGraph:
 
         # there has to be one branch and
         # instead of removing the endNode increase by one, the endNode has no outgoing edges therefore its result is -1
-        checkNodes = [startNode]
+        nodesToCheck = [startNode]
         maxWidth = MaxWidth(0, 0)
-        iteration = 1
+        depth = 0
 
         width = 1
         diffOutIn = 0
         while True:
 
-            for node in checkNodes:
-                width += (graph.out_degree(node) - 1)
+            for node in nodesToCheck:
+                newBranches = (graph.out_degree(node) - 1)
+                width += newBranches
                 diffOutIn += (graph.out_degree(node) - graph.in_degree(node))
 
             if width > maxWidth.width:
-                maxWidth = MaxWidth(width, iteration)
-            nextNodes = []
-            for node in checkNodes:
-                nextNodes.extend(list(graph.successors(node)))
-            if len(nextNodes) == 1 and not graph.successors(nextNodes[0]):
-                break
-            checkNodes = nextNodes
-            iteration += 1
+                maxWidth = MaxWidth(width, depth)
 
+            # if the sum of out_edges - in_edges is 1 this means there is no concurrent branch and the counting
+            # has to be reset
             if diffOutIn == 1:
                 width = 1
 
-        assert diffOutIn == 0
+            #determine nodes of depth + 1
+            nextNodesToCheck = []
+            for node in nodesToCheck:
+                nextNodesToCheck.extend(list(graph.successors(node)))
+            if not nextNodesToCheck:
+                break
+
+            #algorithm only works for nodes that have a successor, end node does not have a successor
+            if endNode in nextNodesToCheck:
+                nextNodesToCheck.remove(endNode)
+            nodesToCheck = nextNodesToCheck
+
+            depth += 1
 
         return maxWidth
 

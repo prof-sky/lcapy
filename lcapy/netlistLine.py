@@ -150,6 +150,9 @@ class NetlistLine:
             warn(f"potential error while parsing {self.line}: reconstructed -> {self.reconstruct}")
 
     def __str__(self):
+        return self.reconstruct()
+
+    def orgVal(self):
         return str(self.cpt)
 
 
