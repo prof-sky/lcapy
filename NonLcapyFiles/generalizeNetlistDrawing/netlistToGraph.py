@@ -1,5 +1,6 @@
 import lcapy
 import networkx as nx
+from networkx import MultiDiGraph
 from lcapy import NetlistLine
 from maxWidth import MaxWidth
 from widestPath import WidestPath
@@ -10,9 +11,9 @@ class NetlistGraph:
         self.graphStart: int
         self.graphEnd: int
         self.cleandUpNetlist: list[NetlistLine] = self._cleanUpNetlist()
-        self.graph: nx.DiGraph = self._createGraph()
+        self.graph: MultiDiGraph = self._createGraph()
         self.spanningWidth = self._findSpanningWidth(self.graph, self.graphStart, self.graphEnd)
-        print(f"branchWidth: {self.spanningWidth.width}, nodes: {self.graph.nodes}")
+        print(f"treeWidth: {self.spanningWidth.width}, nodes: {self.graph.nodes}")
         print("------------------------")
         self.paths = self._findPaths()
         for path in self.paths:
@@ -64,10 +65,10 @@ class NetlistGraph:
 
         return cleandUpNetlist
 
-    def _createGraph(self) -> nx.DiGraph:
-        graph = nx.DiGraph()
+    def _createGraph(self) -> MultiDiGraph:
+        graph = MultiDiGraph()
         for line in self.cleandUpNetlist:
-            graph.add_edge(line.startNode, line.endNode, name=line.label)
+            graph.add_edge(line.startNode, line.endNode, key=line.label)
 
         return graph
 
@@ -97,21 +98,32 @@ class NetlistGraph:
 
         # there has to be one branch and
         # instead of removing the endNode increase by one, the endNode has no outgoing edges therefore its result is -1
-        checkNodes = list(graph.successors(startNode))
+        checkNodes = [startNode]
         maxWidth = MaxWidth(0, 0)
         iteration = 1
 
+        width = 1
+        diffOutIn = 0
         while True:
-            width = len(checkNodes)
+
+            for node in checkNodes:
+                width += (graph.out_degree(node) - 1)
+                diffOutIn += (graph.out_degree(node) - graph.in_degree(node))
+
             if width > maxWidth.width:
                 maxWidth = MaxWidth(width, iteration)
             nextNodes = []
             for node in checkNodes:
                 nextNodes.extend(list(graph.successors(node)))
-            if len(nextNodes) == 1 and nextNodes[0] == endNode:
+            if len(nextNodes) == 1 and not graph.successors(nextNodes[0]):
                 break
             checkNodes = nextNodes
             iteration += 1
+
+            if diffOutIn == 1:
+                width = 1
+
+        assert diffOutIn == 0
 
         return maxWidth
 
