@@ -22,6 +22,7 @@ class NetlistGraph:
             branchWidth = self._findBranchWidth(self.graph.subgraph(nodesList), nodesList[0], nodesList[-1])
             print(f"branchWidth: {branchWidth.width}, path: {nodesList}")
         self.longestPath = self._findLongestPath()
+        self._findParallelSubGraphs()
 
 
     def _cleanUpNetlist(self) -> list[NetlistLine]:
@@ -150,6 +151,44 @@ class NetlistGraph:
 
         return foundPath or list(self.paths)[0]
 
+    def _findParallelSubGraphs(self):
+        parallelStartNodes = []
+        for node in self.graph.nodes:
+            if self.graph.out_degree(node) > 1:
+                parallelStartNodes.append(node)
+
+        for parallelStartNode in parallelStartNodes:
+            paths: list[set] = []
+            for path in nx.all_simple_paths(self.graph, parallelStartNode, self.graphEnd):
+                paths.append(set(path))
+
+            intersect = paths[0]
+            for path in paths:
+                intersect.intersection(path)
+            possibleEndNodes = list(intersect)
+            possibleEndNodes.remove(parallelStartNode)
+
+            endNode = possibleEndNodes[0]
+            minLength = len(nx.shortest_path(self.graph, parallelStartNode, possibleEndNodes[0]))
+            for node in possibleEndNodes[1:]:
+                curNodeLength = len(nx.shortest_path(self.graph, parallelStartNode, node))
+                if curNodeLength < minLength:
+                    minLength = curNodeLength
+                    endNode = node
+
+            print(endNode)
+
     @property
     def maxPathLength(self):
         return len(self.longestPath)
+
+    def draw_graph(self):
+        import matplotlib.pyplot as plt
+
+        # Visualize the graph
+        pos = nx.spring_layout(self.graph)
+        nx.draw_networkx_nodes(self.graph, pos)
+        nx.draw_networkx_edges(self.graph, pos)
+        nx.draw_networkx_labels(self.graph, pos)
+
+        plt.show()
