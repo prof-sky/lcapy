@@ -1,3 +1,6 @@
+## 1.24+inskale.0.37
+- suppress warnings in release
+
 ## 1.24+inskale.0.36
 - fix undefined circuitType in export
 - fix wrong cpt type when symbols are used
