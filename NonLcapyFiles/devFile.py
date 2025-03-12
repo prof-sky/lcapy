@@ -9,7 +9,9 @@ import cProfile
 
 def work():
     a.createInitialStep().toFiles()
-    a.simplifyNCpts(["Z2", "Z3"]).toFiles()
+    for line in open(f"StepsToSolve/{folder}/{filename}").readlines():
+        cpts = line.replace(" ", "").replace("\n", "").split(",")
+        a.simplifyNCpts(cpts).toFiles()
 
 #  clear Solutions directory
 clearPath = "./Solutions"
@@ -17,17 +19,28 @@ files = os.listdir(clearPath)
 for file in files:
     os.remove(os.path.join(clearPath, file))
 
-fixFile = True
+fixFile = False
 if fixFile:
-    filePath = "Circuits/mixed"
-    filename = "01_mixed_RCL_parallel.txt"
+    folder = "resistor"
+    filePath = f"Circuits/{folder}"
+    filename = "00_Resistor_Hetznecker.txt"
 else:
     from tkinter import filedialog
     curPath = os.getcwd()
     absFilePath = filedialog.askopenfilename(initialdir=os.path.join(curPath, "Circuits"),
                                              filetypes=[("Textdateien", "*.txt"), ("Alle Dateien", "*.*")])
     filePath = os.path.dirname(absFilePath)
+    folder = os.path.basename(filePath)
     filename = os.path.basename(absFilePath)
+
+if not os.path.isfile(f"StepsToSolve/{folder}/{filename}"):
+    print("File with steps to solve not found:")
+    if not os.path.isfile(f"StepsToSolve/{folder}/{filename}"):
+        file = open(f"StepsToSolve/{folder}/{filename}", "w")
+        file.close()
+        print(f"File StepsToSolve/{folder}/{filename} created.")
+        exit("fill created file with steps to solve")
+    exit(f"Create File ./StepsToSolve/{folder}/{filename} with steps to solve")
 
 if not ValidateCircuitFile([os.path.join(filePath, filename)]).isValid():
     exit("File not valid")
