@@ -163,16 +163,15 @@ class DrawWithSchemdraw:
         # labels get the value "###.### ##" to set the viewport to max width frontend relies on correct viewport witdth
         # to change labels to its representative value
         id_ = line.label
+        label = "###.### ##"
         if line.type == "W":
             label = ""
         elif line.type == 'V' or line.type == 'I':
-            label = "###.### ##"
             value = line.value
         else:
             line = NetlistLine(ImpedanceToComponent(netlistLine=line, omega_0=self.omega_0))
             value = self.latexStr(line)
             id_ = line.label
-            label = "###.### ##"
 
         if line.type == "R" or line.type == "Z":
             sdElement = elm.Resistor(id_=id_, class_=value, d=line.drawParam, fill="transparent")
@@ -189,7 +188,7 @@ class DrawWithSchemdraw:
             if line.ac_dc == "ac":
                 sdElement = elm.sources.SourceSin(id_=id_, class_=value, d=line.drawParam)
             elif line.ac_dc == "dc":
-                sdElement = elm.sources.SourceV(id_=id_, class_=value, d=line.drawParam)
+                sdElement = elm.sources.StabilizedSource(id_=id_, class_=value, d=line.drawParam)
         elif line.type == "I":
             # this is necessary because lcapy and schemdraw have a different convention for sources
             line.swapNodes()
