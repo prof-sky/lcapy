@@ -76,7 +76,7 @@ class SolveInUserOrder:
                                            relation=ComponentRelation.parallel.value,
                                            lastStep=None, nextStep=None))
         else:
-            return DictExportBase.emptyExportDict
+            return DictExportBase.emptyExportDict()
 
         sol = Solution(self.steps, langSymbols=self.langSymbols)
         newestStep = sol.available_steps[-1]

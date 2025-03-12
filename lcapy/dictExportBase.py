@@ -21,20 +21,15 @@ class ExportDict(dict):
         cls.save_path = savePath
         cls.file_name = fileName
 
-    def _errorHandling(self):
+    def toFiles(self, savePath=None, fileName=None) -> tuple[bool, str, str]:
         if not self["step"] or not self["svgData"]:
-            raise RuntimeError(f"To file only works when svgData and a step name is available:"
-                               f" stepVal: {self['step']}"
-                               f" svgData: {self['svgData']}")
-
-    def toFiles(self, savePath=None, fileName=None):
+            return False, "", ""
 
         return True, self.toJSON(savePath, fileName), self.toSVG(savePath, fileName)
 
     def toSVG(self, savePath=None, fileName=None) -> str:
         savePath = savePath if savePath else self.save_path
         fileName = fileName if fileName else self.file_name
-        self._errorHandling()
 
         step = self["step"]
         fileName = os.path.splitext(fileName)[0]
@@ -137,12 +132,12 @@ class DictExportBase:
     def getDictForStep(self, step, solution: 'lcapy.Solution'):
         raise NotImplementedError("Implement in Child class")
 
-    @property
-    def emptyExportDict(self) -> ExportDict:
+    @staticmethod
+    def emptyExportDict() -> ExportDict:
         return ExportDict({
                 "step": None,
                 "canBeSimplified": False,
-                "simplifiedTo": self.emptyExportDictCpt(),
+                "simplifiedTo": DictExportBase.emptyExportDictCpt(),
                 "componentsRelation": ComponentRelation.none.to_string(),
                 "components": [],
                 "allComponents": [],
