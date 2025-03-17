@@ -12,6 +12,12 @@ def work():
     for line in open(f"StepsToSolve/{folder}/{filename}").readlines():
         cpts = line.replace(" ", "").replace("\n", "").split(",")
         a.simplifyNCpts(cpts).toFiles()
+        netlist = a.steps[-1].circuit.netlist()
+        index = a.steps.index(a.steps[-1])
+        f = open(f"net_{filename}_step_{index}", "w")
+        f.write(netlist)
+        f.close()
+
 
 #  clear Solutions directory
 clearPath = "./Solutions"

@@ -44,7 +44,7 @@ $startDir = Get-Location
 Write-Host "Execute base lcapy tests" -ForegroundColor Green
 Start-Sleep -Milliseconds 200
 Set-Location $PSScriptRoot/lcapy/tests
-pytest
+pytest -n 8
 
 if ($LASTEXITCODE -ne 0)
 {
