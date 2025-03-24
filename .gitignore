@@ -24,3 +24,5 @@ dist
 NonLcapyFiles/Solutions
 NonLcapyFiles/Circuits/*/*.svg
 NonLcapyFiles/.tmpSVGFiles
+lcapy/tests/__pycache__
+lcapy-1.24+inskale.0.37

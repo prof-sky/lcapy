@@ -71,9 +71,6 @@ from .nodalanalysis import *
 from .loopanalysis import *
 from .exprclasses import *
 from .seqclasses import *
-from .netlistLine import NetlistLine
-from .drawWithSchemdraw import DrawWithSchemdraw
-from .impedanceConverter import FileToImpedance
 
 import sys
 import pkg_resources

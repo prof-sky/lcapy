@@ -7,7 +7,6 @@ from lcapy.solutionStep import SolutionStep
 from .expr import expr
 from warnings import warn
 from lcapy.componentRelation import ComponentRelation
-from collections import OrderedDict
 
 
 class NetlistSimplifyMixin:

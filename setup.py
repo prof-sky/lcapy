@@ -46,9 +46,9 @@ setup(name='lcapy',
               'lcapy=lcapy.scripts.lcapy:main',
           ],
       },
+      license='LGPL-2.1-or-later',
       classifiers=[
           "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)",
           "Operating System :: OS Independent",
       ],
       )

@@ -10,14 +10,14 @@ from typing import Iterable
 from warnings import warn
 from lcapy import state
 from lcapy.mnacpts import R, L, C, Z
-from lcapy import DrawWithSchemdraw
-from lcapy.dictExport import DictExport
-from lcapy.dictExportCircuitInfo import DictExportCircuitInfo
-from lcapy.unitWorkAround import UnitWorkAround as uwa
+from simplipfy.drawWithSchemdraw import DrawWithSchemdraw
+from simplipfy.Export.dictExport import DictExport
+from simplipfy.Export.dictExportCircuitInfo import DictExportCircuitInfo
+from simplipfy.unitWorkAround import UnitWorkAround as uwa
 from typing import Union
-from lcapy.langSymbols import LangSymbols
-from lcapy.dictExportBase import ExportDict
-from lcapy.impedanceConverter import ImpedanceToComponent
+from simplipfy.langSymbols import LangSymbols
+from simplipfy.Export.dictExportBase import ExportDict
+from simplipfy.impedanceConverter import ImpedanceToComponent
 
 class Solution:
     def __init__(self, steps: list[SolutionStep], langSymbols: LangSymbols):
