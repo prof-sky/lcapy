@@ -2,7 +2,7 @@
 from setuptools import setup, find_packages
 
 
-__version__ = '1.24+inskale.0.37'
+__version__ = '0.38'
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -11,7 +11,7 @@ tests_require = ['pytest', 'flake8', 'flake8-bugbear',
                  'flake8-comprehensions', 'flake8-requirements']
 
 
-setup(name='lcapy',
+setup(name='lcapyInskale',
       version=__version__,
       author='Michael Hayes',
       author_email='michael.hayes@canterbury.ac.nz',

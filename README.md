@@ -18,7 +18,7 @@ arbitrary node names (except for the ground node which is labelled 0).
 The netlists can be loaded from a file or created at run-time.  For
 example:
 
-    >>> from lcapy import Circuit, s, t
+    >>> from lcapyInskale import Circuit, s, t
     >>> cct = Circuit("""
     ... Vs 2 0 {5 * u(t)}
     ... Ra 2 1
@@ -69,7 +69,7 @@ The components have the following attributes:
 The component values can be specified numerically or symbolically
 using strings, for example,
 
-    >>> from lcapy import Vdc, R, L, C, s, t
+    >>> from lcapyInskale import Vdc, R, L, C, s, t
     >>> R1 = R('R_1')
     >>> L1 = L('L_1')
     >>> a = Vdc(10) + R1 + L1
@@ -113,7 +113,7 @@ are provided to determine transfer responses between the ports.
 
 Here's an example of creating a voltage divider (L section)
 
-    >>> from lcapy import *
+    >>> from lcapyInskale import *
     >>> a = LSection(R('R_1'), R('R_2'))
 
 
@@ -133,7 +133,7 @@ Schematics
 LaTeX schematics can be generated using circuitikz from the netlist.
 Additional drawing hints, such as direction and size are required.
 
-    >>> from lcapy import Circuit
+    >>> from lcapyInskale import Circuit
     >>> cct = Circuit("""
     ... P1 1 0; down
     ... R1 1 3; right
@@ -152,7 +152,7 @@ optional.  The symbol label can be changed using the l keyword; the
 voltage and current labels are specified with the v and i keywords.
 For example,
 
-    >>> from lcapy import Circuit
+    >>> from lcapyInskale import Circuit
     >>> cct = Circuit("""
     ... V1 1 0; down
     ... R1 1 2; left=2, i=I_1, v=V_{R_1}
