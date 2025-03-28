@@ -18,6 +18,7 @@ class NetlistSimplifyMixin:
             print(string % subset)
 
         subset_list = list(subset)
+        subset_list.sort()
 
         if add:
             total = expr(0)
