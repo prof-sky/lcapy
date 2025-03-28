@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 __version__ = '0.38'
 
@@ -28,7 +27,6 @@ setup(name='lcapyInskale',
                         'setuptools',
                         'wheel',
                         'property_cached',
-                        'schemdraw',
                         'ordered_set'
                         ],
       python_requires='>=3.7',  # >=3.6 should still work but not tested
