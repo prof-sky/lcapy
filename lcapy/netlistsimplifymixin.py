@@ -44,7 +44,7 @@ class NetlistSimplifyMixin:
             if explain:
                 print('%s combined IC = %s' % (subset, ic))
 
-        newname = self.namer(name[0] + 't', self.elements)
+        newname = self.namer.tmpName(name[0], self.elements)
         net1 = elt._new_value(total, ic)
         parts = net1.split(' ', 1)
         net1 = newname + ' ' + parts[1]
@@ -406,5 +406,19 @@ class NetlistSimplifyMixin:
                 break
         if not modify:
             return self
+
+        # add right name
+
+        tmpNames = [name for name in net.cpts if "tmp" in name]
+        # ToDo
+        for tmpName in tmpNames:
+            newname = net.namer.name(tmpName[0] + 's', self.elements)
+
+            net1 = str(net.elements[tmpName])
+            parts = net1.split(' ', 1)
+            net1 = newname + ' ' + parts[1]
+
+            net.add(net1)
+            net.remove(tmpName)
 
         return net
