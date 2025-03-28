@@ -1,7 +1,7 @@
-from lcapy import *
-from lcapy.discretetime import *
 import unittest
-import sympy as sym
+
+from lcapyInskale import *
+from lcapyInskale.discretetime import *
 
 
 class LcapyZTransforms(unittest.TestCase):
