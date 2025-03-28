@@ -5,20 +5,40 @@ Copyright 2020--2023 Michael Hayes, UCECE
 
 """
 
-
 class ComponentNamer(object):
+    """
+    Is used to provide a unique naming of components until it is reset.
+    """
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(ComponentNamer, cls).__new__(cls)
+        return cls.instance
 
     def __init__(self):
+        if not hasattr(self, 'names'):
+            self.names = []
 
+    def reset(self):
+        """Because this is implemented as a singleton a reset can be necessary"""
         self.names = []
 
     def name(self, cpt_type, names):
 
         m = 1
+        nameSet = set(list(names) + self.names)
         while True:
             name = cpt_type + str(m)
-            if name not in names and name not in self.names:
+            if name not in nameSet:
                 self.names.append(name)
+                return name
+            m += 1
+
+    def tmpName(self, cpt_type, names):
+        m = 1
+        nameSet = set(list(names) + self.names)
+        while True:
+            name = cpt_type + "tmp" + str(m)
+            if name not in nameSet:
                 return name
             m += 1
 
