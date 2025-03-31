@@ -1,5 +1,7 @@
-from lcapy import *
 import unittest
+
+from lcapy import *
+from lcapy.componentnamer import ComponentNamer
 
 
 class LcapyTester(unittest.TestCase):
