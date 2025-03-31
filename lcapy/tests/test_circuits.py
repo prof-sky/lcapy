@@ -1,9 +1,9 @@
-from lcapy import *
-from lcapy.current import current_sign
-
-import unittest
-import sympy as sym
 import os
+import unittest
+
+from lcapy import *
+from lcapy.componentnamer import ComponentNamer
+from lcapy.current import current_sign
 
 
 class LcapyTester(unittest.TestCase):
@@ -287,27 +287,27 @@ class LcapyTester(unittest.TestCase):
 
     def test_causal1(self):
         """Test VRL circuit causality"""
-        lcapy.componentnamer.ComponentNamer().reset()
+        ComponentNamer().reset()
         a = Circuit()
         a.add('V1 1 0 {4 + 2 * u(t)}; down')
         a.add('R1 1 2 2; right=2')
         a.add('L1 2 3 2; down')
         a.add('W 0 3; right')
 
-        lcapy.componentnamer.ComponentNamer().reset()
+        ComponentNamer().reset()
         self.assertEqual(a.sub['s'].is_causal, True, "Causal incorrect")
         self.assertEqual2(a.L1.v, voltage(
             2 * exp(-t) * u(t)), "L current incorrect")
 
-        lcapy.componentnamer.ComponentNamer().reset()
+        ComponentNamer().reset()
         b = a.transient()
         self.assertEqual2(b.V1.v, voltage(2 * u(t)), "Transient")
 
-        lcapy.componentnamer.ComponentNamer().reset()
+        ComponentNamer().reset()
         c = a.laplace()
         self.assertEqual2(c.L1.cpt.i0, current(2), "Laplace")
 
-        lcapy.componentnamer.ComponentNamer().reset()
+        ComponentNamer().reset()
         d = a.dc()
         self.assertEqual2(d.R1.v, voltage(4), "DC")
 
