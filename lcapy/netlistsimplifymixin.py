@@ -3,10 +3,12 @@
 Copyright 2022--2023 Michael Hayes, UCECE
 
 """
+from typing import List
+from warnings import warn
+
+from lcapy.componentRelation import ComponentRelation
 from lcapy.solutionStep import SolutionStep
 from .expr import expr
-from warnings import warn
-from lcapy.componentRelation import ComponentRelation
 
 
 class NetlistSimplifyMixin:
@@ -347,7 +349,7 @@ class NetlistSimplifyMixin:
                              series=False, parallel=True, dangling=False,
                              keep_nodes=keep_nodes)
 
-    def get_next_simplify_elements(self, series: bool = False, parallel: bool = False, debug: bool = False) -> list[str]:
+    def get_next_simplify_elements(self, series: bool = False, parallel: bool = False, debug: bool = False) -> List[str]:
         """
         The function returns two elements from a list. The list of elements is sorted by name so with the same
         components in a circuit the order of the returned elements will alway be the same. The elements in the returned
@@ -443,7 +445,7 @@ class NetlistSimplifyMixin:
         newCptName = self.find_new_cpt_name(oldCpts, newCpts)
         return net, newCptName
 
-    def simplify_stepwise(self, limit: int = 100, debug: bool = False) -> list[SolutionStep]:
+    def simplify_stepwise(self, limit: int = 100, debug: bool = False) -> List[SolutionStep]:
         """
         Simplifies the circuit it is called on stepwise and returns a list of tupels which represent all steps
         that where made to simplify the circuit. The tuple contains the under return specified elements.
