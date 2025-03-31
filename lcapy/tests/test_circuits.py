@@ -287,23 +287,27 @@ class LcapyTester(unittest.TestCase):
 
     def test_causal1(self):
         """Test VRL circuit causality"""
-
+        lcapy.componentnamer.ComponentNamer().reset()
         a = Circuit()
         a.add('V1 1 0 {4 + 2 * u(t)}; down')
         a.add('R1 1 2 2; right=2')
         a.add('L1 2 3 2; down')
         a.add('W 0 3; right')
 
+        lcapy.componentnamer.ComponentNamer().reset()
         self.assertEqual(a.sub['s'].is_causal, True, "Causal incorrect")
         self.assertEqual2(a.L1.v, voltage(
             2 * exp(-t) * u(t)), "L current incorrect")
 
+        lcapy.componentnamer.ComponentNamer().reset()
         b = a.transient()
         self.assertEqual2(b.V1.v, voltage(2 * u(t)), "Transient")
 
+        lcapy.componentnamer.ComponentNamer().reset()
         c = a.laplace()
         self.assertEqual2(c.L1.cpt.i0, current(2), "Laplace")
 
+        lcapy.componentnamer.ComponentNamer().reset()
         d = a.dc()
         self.assertEqual2(d.R1.v, voltage(4), "DC")
 
@@ -854,10 +858,10 @@ class LcapyTester(unittest.TestCase):
         R2 2 3 5
         R3 3 4 15""")
 
-        self.assertEqual(a.simplify().Rt1.R, 30, 'series R')
-        self.assertEqual(a.simplify_series().Rt1.R, 30, 'series R')
+        self.assertEqual(a.simplify().Rs1.R, 30, 'series R')
+        self.assertEqual(a.simplify_series().Rs2.R, 30, 'series R')
         self.assertEqual(a.simplify_series(
-            ignore=['R3']).Rt1.R, 15, 'series R')
+            ignore=['R3']).Rs3.R, 15, 'series R')
 
         self.assertEqual(len(a.simplify().remove_dangling_wires().elements),
                          1, 'dangling wires')
@@ -867,19 +871,19 @@ class LcapyTester(unittest.TestCase):
         R2 1 2 60
         R3 1 2 15""")
 
-        self.assertEqual(b.simplify().Rt1.R, 7.5, 'parallel R')
-        self.assertEqual(b.simplify_parallel().Rt1.R, 7.5, 'parallel R')
+        self.assertEqual(b.simplify().Rs5.R, 7.5, 'parallel R')
+        self.assertEqual(b.simplify_parallel().Rs6.R, 7.5, 'parallel R')
         self.assertEqual(b.simplify_parallel(
-            ignore=['R1']).Rt1.R, 12, 'parallel R')
+            ignore=['R1']).Rs7.R, 12, 'parallel R')
         self.assertEqual(b.simplify_parallel(
-            select=['R2', 'R3']).Rt1.R, 12, 'parallel R')
+            select=['R2', 'R3']).Rs8.R, 12, 'parallel R')
 
         c = Circuit("""
         R1 1 2 20
         R2 1 2 60
         R3 3 4 15""")
 
-        self.assertEqual(c.simplify().Rt1.R, 15,
+        self.assertEqual(c.simplify().Rs9.R, 15,
                          'parallel R with disconnected')
 
         self.assertEqual(len(c.remove_disconnected().elements),

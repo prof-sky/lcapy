@@ -10,6 +10,7 @@ class LcapyTester(unittest.TestCase):
 
     def test_schematic1(self):
 
+        ComponentNamer().reset()
         a = R(1) + C(2)
         a.draw('tmp.tex')
 
@@ -38,6 +39,7 @@ class LcapyTester(unittest.TestCase):
 
     def test_schematic2(self):
 
+        ComponentNamer().reset()
         a = Circuit("""
 R1 1 2 1; right
 R2 2 3 2; right
@@ -72,6 +74,7 @@ C 1 3 3; right""")
 
     def test_network_node_positions1(self):
 
+        ComponentNamer().reset()
         a = R(1) + C(2)
         sch = a.sch()
         sch._positions_calculate()
@@ -84,6 +87,7 @@ C 1 3 3; right""")
 
     def test_network_node_positions2(self):
 
+        ComponentNamer().reset()
         a = (R(1) + C(2)) | L(3)
         sch = a.sch()
         sch._positions_calculate()
@@ -102,6 +106,7 @@ C 1 3 3; right""")
 
     def test_network_danglin3(self):
 
+        ComponentNamer().reset()
         a = Circuit("""
 R1 1 2; right
 R2 2 3; right
