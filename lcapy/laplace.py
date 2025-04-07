@@ -1,4 +1,4 @@
-"""This module provides support for Laplace transforms.  It acts as a
+r"""This module provides support for Laplace transforms.  It acts as a
 quantity for SymPy's Laplace transform.  It calculates the unilateral
 Laplace transform using:
 

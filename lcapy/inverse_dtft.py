@@ -1,9 +1,9 @@
-"""This module provides support for inverse discrete-time Fourier
+r"""This module provides support for inverse discrete-time Fourier
 transforms.
 
  It calculates the inverse discrete-time Fourier transform using:
 
-   x(n) = dt * \int_{-1 / (2 * dt)}^{1 / (2 * dt))} X(f) e^{j * 2 * \pi * n * dt * f} df
+   x(n) = dt * \int_{-1 / (2 * dt)}^{1 / (2 * dt)} X(f) e^{j * 2 * \pi * n * dt * f} df
 
 where dt is the sampling period.  The integral just needs to be
 performed over any interval of length 1 / dt.

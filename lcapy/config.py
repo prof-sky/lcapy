@@ -18,7 +18,7 @@ aliases = {'delta': 'DiracDelta', 'step': 'Heaviside', 'u': 'Heaviside',
 
 str_expr_map = {sym.I: 'j'}
 
-latex_expr_map = {sym.I: '\mathrm{j}', sym.Heaviside: 'u'}
+latex_expr_map = {sym.I: r'\mathrm{j}', sym.Heaviside: 'u'}
 
 # Hack to pretty print i as j
 junicode = '\u2149'
