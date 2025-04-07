@@ -80,7 +80,7 @@ del absolute_import, print_function
 name = "lcapy"
 
 
-__version__ = pkg_resources.require('lcapy')[0].version
+__version__ = pkg_resources.require('lcapyInskale')[0].version
 lcapy_version = __version__
 
 if sys.version_info[0] == 2 and sys.version_info[1] < 6:

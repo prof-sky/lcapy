@@ -137,7 +137,7 @@ class TimeDomainExpression(TimeDomain, Expr):
         return PhasorDomainExpression.from_time(self, **assumptions)
 
     def FT(self, var=None, evaluate=True, **assumptions):
-        """Attempt Fourier transform.
+        r"""Attempt Fourier transform.
 
         X(f) = \int_{-\infty} ^ {\infty} x(t) exp(-j 2\pi f t) dt."""
 
@@ -274,7 +274,7 @@ class TimeDomainExpression(TimeDomain, Expr):
         return self.__class__(expr)
 
     def discretize(self, method=None, alpha=0.5):
-        """Convert to a discrete-time approximation:
+        r"""Convert to a discrete-time approximation:
 
         :math:`x(n) \approx K x(t)`
 

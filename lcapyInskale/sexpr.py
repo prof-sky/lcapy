@@ -203,7 +203,7 @@ class LaplaceDomainExpression(LaplaceDomain, Expr):
 
     def norm_angular_fourier(self, **assumptions):
         """Convert to normalized angular Fourier domain."""
-        from .symbols import jw, Omega
+        from .symbols import Omega
 
         if ((self.is_causal or assumptions.get('causal', False))
                 and self.is_stable):
@@ -216,7 +216,7 @@ class LaplaceDomainExpression(LaplaceDomain, Expr):
 
     def norm_fourier(self, **assumptions):
         """Convert to normalized Fourier domain."""
-        from .symbols import jw, F
+        from .symbols import F
 
         if ((self.is_causal or assumptions.get('causal', False))
                 and self.is_stable):
@@ -713,7 +713,7 @@ class LaplaceDomainExpression(LaplaceDomain, Expr):
         See also `discretize` with regards to scaling of the result.
         """
 
-        from .discretetime import n, z, dt
+        from .discretetime import n, dt
 
         # An alternative approach is to expand as partial fractions
         # and then replace (s + alpha) with (1 - exp(-alpha * dt) *
@@ -732,7 +732,7 @@ class LaplaceDomainExpression(LaplaceDomain, Expr):
         return H
 
     def discretize(self, method=None, alpha=0.5, scale=None):
-        """Convert to a discrete-time approximation in the z-domain:
+        r"""Convert to a discrete-time approximation in the z-domain:
 
         :math:`H(z) \approx K H_c(s)`
 
