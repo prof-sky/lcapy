@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from lcapyInskale.circuit import Circuit
 
@@ -20,9 +22,9 @@ class SolutionStep:
         self.nextStep: Union[Circuit, None] = nextStep
 
     def draw(self, langSymbols):
-        from simplipfy.drawWithSchemdraw import DrawWithSchemdraw
+        from simplipfy.svg.drawWithSchemdraw import DrawWithSchemdraw
         DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).draw()
 
     def getImageData(self, langSymbols) -> str:
-        from simplipfy.drawWithSchemdraw import DrawWithSchemdraw
+        from simplipfy.svg.drawWithSchemdraw import DrawWithSchemdraw
         return DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()
