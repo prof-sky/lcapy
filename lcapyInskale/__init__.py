@@ -71,16 +71,15 @@ from .nodalanalysis import *
 from .loopanalysis import *
 from .exprclasses import *
 from .seqclasses import *
+from importlib.metadata import version
 
 import sys
-import pkg_resources
 del absolute_import, print_function
 
 
 name = "lcapy"
 
-
-__version__ = pkg_resources.require('lcapyInskale')[0].version
+__version__ = version('lcapyInskale')
 lcapy_version = __version__
 
 if sys.version_info[0] == 2 and sys.version_info[1] < 6:
