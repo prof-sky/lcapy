@@ -22,9 +22,9 @@ class SolutionStep:
         self.nextStep: Union[Circuit, None] = nextStep
 
     def draw(self, langSymbols):
-        from simplipfy.svg.drawWithSchemdraw import DrawWithSchemdraw
+        from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
         DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).draw()
 
     def getImageData(self, langSymbols) -> str:
-        from simplipfy.svg.drawWithSchemdraw import DrawWithSchemdraw
+        from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
         return DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()
