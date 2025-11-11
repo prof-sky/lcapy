@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-__version__ = '0.38.5'
+__version__ = '0.38.6'
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()

@@ -7,6 +7,7 @@ if TYPE_CHECKING:
 
 from lcapyInskale.componentRelation import ComponentRelation
 from typing import Union
+from simplipfy.SimplifyInUserOrder.simplifierStates import SimplifierStates
 
 
 class SolutionStep:
@@ -17,6 +18,7 @@ class SolutionStep:
         self.cpts: list[str] = cpts
         self.newCptName: Union[str, None] = newCptName
         self.relation: ComponentRelation = relation
+        self.simplifierSate: SimplifierStates = SimplifierStates.fromCptRelation(relation)
         self.isInitialStep: bool = not (self.cpts or self.newCptName or self.relation)
         self.lastStep: Union[Circuit, None] = lastStep
         self.nextStep: Union[Circuit, None] = nextStep
