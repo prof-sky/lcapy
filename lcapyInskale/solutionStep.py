@@ -9,7 +9,6 @@ from lcapyInskale.componentRelation import ComponentRelation
 from typing import Union
 from simplipfy.SimplifyInUserOrder.simplifierStates import SimplifierStates
 
-
 class SolutionStep:
     def __init__(self, circuit: Circuit, cpts: list[str], newCptName: str,
                  relation: ComponentRelation, lastStep: Circuit, nextStep: Circuit
@@ -30,3 +29,11 @@ class SolutionStep:
     def getImageData(self, langSymbols) -> str:
         from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
         return DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()
+
+    def generalizedImageData(self, langSymbols) -> str:
+        from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
+        from simplipfy.Svg.drawingConfig import drawing_config_instance as dci
+        dci.lock(on="--generalize-true --optimize-mobile")
+        svgString = DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()
+        dci.unlock()
+        return svgString
