@@ -33,7 +33,9 @@ class SolutionStep:
     def generalizedImageData(self, langSymbols) -> str:
         from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
         from simplipfy.Svg.drawingConfig import drawing_config_instance as dci
+        options = dci.saveOptions()
         dci.lock(on="--generalize-true --optimize-mobile")
         svgString = DrawWithSchemdraw(self.circuit, langSymbols=langSymbols).getImageData()
         dci.unlock()
+        dci.loadOptions(options)
         return svgString
