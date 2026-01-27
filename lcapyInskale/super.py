@@ -603,6 +603,7 @@ class Superposition(SuperpositionDomain, ExprDict):
         # Avoid triggering __eq__ for Super otherwise have infinite recursion
         if not isinstance(value, Superposition):
             if val == 0:
+                self[self._kind(value)] = value
                 return
 
         if hasattr(self, '_decomposition'):
