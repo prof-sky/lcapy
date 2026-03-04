@@ -11,7 +11,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-from lcapy import __version__
+from lcapyInskale import __version__
 import sys
 import os
 
