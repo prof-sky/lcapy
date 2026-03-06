@@ -21,6 +21,21 @@ class SolutionStep:
         self.isInitialStep: bool = not (self.cpts or self.newCptName or self.relation)
         self.lastStep: Union[Circuit, None] = lastStep
         self.nextStep: Union[Circuit, None] = nextStep
+        self.isSimplified: bool = self._isSimplified()
+
+    def _isSimplified(self) -> bool:
+        """ Returns True if no more series or parallel simplifications are possible"""
+        toListList = lambda x: [list(item) for item in x]
+        excludeTypes = ["V", "I"]
+        filterElems = lambda x: [elem for elem in x if elem[0][0] not in excludeTypes and elem[1][0] not in excludeTypes or len(elem) > 2]
+
+        cct_in_series = self.circuit.in_series()
+        cct_in_parallel = self.circuit.in_parallel()
+
+        inSeries = filterElems(toListList(cct_in_series))
+        inParallel = filterElems(toListList(cct_in_parallel))
+
+        return not inSeries and not inParallel
 
     def draw(self, langSymbols):
         from simplipfy.Svg.drawWithSchemdraw import DrawWithSchemdraw
